@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="confirm.pageTitle">Confirmación de pago — UPerfumes</title>
+<meta name="description" data-i18n-content="confirm.pageDesc" content="Resultado de tu pago con Webpay en UPerfumes.">
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!--
+  =========================================================================
+  CONFIRMACIÓN DE PAGO (vuelta de Webpay)
+  =========================================================================
+  El servidor redirige acá después de confirmar (o abortar) la transacción
+  en Transbank, con ?order=BUYORDER en la URL — y &cancelado=1 o &error=1
+  según el caso (ver src/routes/webpay.js). confirmacion.js llama a
+  GET /api/orders/:buyOrder para traer el resultado real guardado en SQLite
+  y arma esta pantalla; no confía en nada que venga solo por la URL.
+  =========================================================================
+-->
+
+<header class="order-header">
+  <div class="order-header__inner">
+    <a href="index.html#inicio" class="logo small">UPerfumes</a>
+  </div>
+</header>
+
+<main class="order-main">
+  <div id="confirmLoading">
+    <p class="order-intro" data-i18n="confirm.loading">Verificando el resultado de tu pago…</p>
+  </div>
+
+  <div id="confirmApproved" class="order-result" hidden>
+    <h2 data-i18n="confirm.approved.title">¡Pago aprobado!</h2>
+    <p data-i18n="confirm.approved.text">Tu pedido quedó confirmado. Te escribimos a tu correo para coordinar el envío por Starken.</p>
+    <dl>
+      <dt data-i18n="confirm.order">Pedido</dt><dd id="apBuyOrder"></dd>
+      <dt data-i18n="confirm.items">Detalle</dt><dd><ul class="confirm-items" id="apItems"></ul></dd>
+      <dt data-i18n="confirm.amount">Monto pagado</dt><dd id="apAmount"></dd>
+      <dt data-i18n="confirm.authCode">Código de autorización</dt><dd id="apAuthCode"></dd>
+      <dt data-i18n="confirm.card">Tarjeta</dt><dd id="apCard"></dd>
+    </dl>
+    <a href="index.html#coleccion" class="order-back-link" data-i18n="order.result.backToCatalog">Volver al catálogo</a>
+  </div>
+
+  <div id="confirmRejected" class="order-result" hidden>
+    <h2 data-i18n="confirm.rejected.title">Pago rechazado</h2>
+    <p data-i18n="confirm.rejected.text">Tu banco rechazó el pago. No se te realizó ningún cobro — puedes intentar de nuevo o elegir transferencia.</p>
+    <a href="index.html#coleccion" class="order-back-link" data-i18n="order.result.backToCatalog">Volver al catálogo</a>
+  </div>
+
+  <div id="confirmCancelled" class="order-result" hidden>
+    <h2 data-i18n="confirm.cancelled.title">Pago cancelado</h2>
+    <p data-i18n="confirm.cancelled.text">Volviste sin terminar de pagar. No se te realizó ningún cobro — puedes intentarlo de nuevo cuando quieras.</p>
+    <a href="index.html#coleccion" class="order-back-link" data-i18n="order.result.backToCatalog">Volver al catálogo</a>
+  </div>
+
+  <div id="confirmError" class="order-result" hidden>
+    <h2 data-i18n="confirm.error.title">No pudimos confirmar el pago</h2>
+    <p data-i18n="confirm.error.text">Algo falló al verificar el resultado. Si alcanzaste a pagar, escríbenos a hola@uperfumes.com con la hora aproximada para revisarlo.</p>
+    <a href="index.html#coleccion" class="order-back-link" data-i18n="order.result.backToCatalog">Volver al catálogo</a>
+  </div>
+</main>
+
+<aside class="page-hub" id="pageHub" aria-label="Modo de color e idioma" data-i18n-aria="hub.ariaLabelLite">
+  <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Cambiar a modo claro">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M10 1.5V3.5M10 16.5V18.5M18.5 10H16.5M3.5 10H1.5M15.6 4.4L14.2 5.8M5.8 14.2L4.4 15.6M15.6 15.6L14.2 14.2M5.8 5.8L4.4 4.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17 11.5A7 7 0 018.5 3a7 7 0 108.5 8.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <div class="hub-lang" id="langSwitch" role="group" aria-label="Idioma / Language / Idioma">
+    <button type="button" class="hub-lang__btn is-active" data-lang="es" aria-pressed="true" aria-label="Español" title="Español">
+      <span class="hub-lang__flag" aria-hidden="true">🇪🇸</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="en" aria-pressed="false" aria-label="English" title="English">
+      <span class="hub-lang__flag" aria-hidden="true">🇬🇧</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português">
+      <span class="hub-lang__flag" aria-hidden="true">🇵🇹</span>
+    </button>
+  </div>
+</aside>
+
+<script src="cart.js"></script>
+<script src="confirmacion.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

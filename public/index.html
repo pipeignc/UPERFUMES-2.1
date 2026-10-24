@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="pageTitle">UPerfumes — Fragancias de alta concentración</title>
+<meta name="description" data-i18n-content="metaDescription" content="UPerfumes: catálogo curado de eaus de parfum, elixires y extraits de alta concentración. Dior, Jean Paul Gaultier, Valentino, Paco Rabanne, Azzaro, Mancera y más.">
+
+<!-- Tipografías: Fraunces (display, serif) para titulares y Jost (sans geométrica) para texto de cuerpo y etiquetas -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<!-- Si el visitante tiene JavaScript desactivado, la cuadrícula del catálogo
+     (que normalmente aparece con una animación al hacer scroll) se muestra
+     directamente, sin depender del script. -->
+<noscript>
+  <style>
+    .perfume-card{ opacity: 1 !important; transform: none !important; }
+  </style>
+</noscript>
+
+<!-- Favicon simple en línea: inicial "U" sobre fondo oscuro, para no depender de un archivo aparte -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<a class="skip-link" href="#coleccion" data-i18n="skipLink">Saltar al catálogo</a>
+
+<!--
+  =========================================================================
+  ENCABEZADO
+  Barra fija que cambia de transparente a sólida al hacer scroll (ver script.js).
+  =========================================================================
+-->
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="#inicio" class="logo">UPerfumes</a>
+
+    <nav class="site-nav" id="siteNav">
+      <a href="#recomendador" data-i18n="nav.recomendador">Recomendador</a>
+      <a href="#coleccion" data-i18n="nav.coleccion">Colección</a>
+      <a href="#comprar" data-i18n="nav.comprar">Comprar</a>
+      <a href="#informacion" data-i18n="nav.informacion">Información</a>
+      <a href="#contacto" data-i18n="nav.contacto">Contacto</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" data-i18n-aria="navToggleOpen" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!--
+    =======================================================================
+    HERO
+    Titular + ilustración de un frasco dibujada en SVG (línea, se "dibuja" 
+    sola al cargar la página). No requiere ninguna imagen del usuario:
+    es una ilustración decorativa, no un producto del catálogo.
+    =======================================================================
+  -->
+  <section class="hero" id="inicio">
+    <div class="hero-glow" aria-hidden="true"></div>
+
+    <div class="hero-inner">
+      <!-- La imagen ya trae el logo "UPerfumes" y el eslogan integrados,
+           así que el título principal (h1) queda solo para lectores de
+           pantalla y buscadores (visualmente oculto con .sr-only), para
+           no repetir el mismo mensaje dos veces en pantalla. -->
+      <h1 class="sr-only" data-i18n="hero.h1">UPerfumes — fragancias que dejan huella</h1>
+
+      <div class="hero-banner reveal" style="--d:0">
+        <img src="images/hero-uperfumes.jpg" alt="UPerfumes, fragancias que dejan huella. Frascos de Dior Homme Intense y Valentino Uomo sobre mármol oscuro con acentos dorados." data-i18n-alt="hero.imgAlt" loading="eager">
+      </div>
+
+      <p class="hero-sub reveal" style="--d:1" data-i18n="hero.sub">
+        Una colección curada de eaus de parfum, elixires y extraits de alta
+        concentración — de casas como Dior y Jean Paul Gaultier a firmas
+        nicho como Mancera y Mykonos.
+      </p>
+      <a href="#coleccion" class="hero-cta reveal" style="--d:2">
+        <span data-i18n="hero.cta">Ver la colección</span>
+        <svg width="16" height="10" viewBox="0 0 16 10" fill="none" aria-hidden="true">
+          <path d="M1 1L8 8L15 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+
+    <button class="scroll-cue" id="scrollCue" aria-label="Bajar al catálogo" data-i18n-aria="scrollCue" type="button">
+      <span></span>
+    </button>
+  </section>
+
+  <!--
+    =======================================================================
+    RECOMENDADOR DE PERFUMES
+    =======================================================================
+    Motor de recomendación simple basado en reglas y pesos (no es un modelo
+    entrenado: es un sistema transparente y explicable, pensado para un
+    catálogo pequeño). La lógica completa y los datos de cada fragancia
+    (ocasión, clima, edad y presupuesto orientativo) viven en script.js,
+    dentro de la constante PERFUMES — no se tocó ninguna tarjeta del
+    catálogo para construir esto.
+
+    Reutiliza el mismo sistema de imágenes de la colección: si guardas
+    las fotos en la carpeta "images" con los nombres ya indicados más
+    abajo en el catálogo, el resultado del recomendador las muestra
+    automáticamente.
+    =======================================================================
+  -->
+  <section class="finder" id="recomendador">
+    <div class="section-head">
+      <h2 data-i18n="finder.title">Encuentra tu fragancia</h2>
+      <p data-i18n="finder.subtitle">Responde estas cuatro preguntas y te sugerimos la fragancia del catálogo que mejor encaja contigo.</p>
+    </div>
+
+    <form class="finder-form" id="finderForm" novalidate>
+
+      <fieldset class="finder-group">
+        <legend class="finder-label" data-i18n="finder.occasion.label">Ocasión</legend>
+        <div class="finder-options" role="radiogroup" aria-label="Ocasión" data-i18n-aria="finder.occasion.label" data-field="occasion">
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="diario" data-i18n="finder.occasion.diario">Diario</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="oficina" data-i18n="finder.occasion.oficina">Oficina</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="noche" data-i18n="finder.occasion.noche">Noche</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="cita" data-i18n="finder.occasion.cita">Cita</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="formal" data-i18n="finder.occasion.formal">Evento formal</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="finder-group">
+        <legend class="finder-label" data-i18n="finder.climate.label">Clima</legend>
+        <div class="finder-options" role="radiogroup" aria-label="Clima" data-i18n-aria="finder.climate.label" data-field="climate">
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="calido" data-i18n="finder.climate.calido">Cálido</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="frio" data-i18n="finder.climate.frio">Frío</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="templado" data-i18n="finder.climate.templado">Templado / todo el año</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="finder-group">
+        <legend class="finder-label" data-i18n="finder.age.label">Edad</legend>
+        <div class="finder-options" role="radiogroup" aria-label="Edad" data-i18n-aria="finder.age.label" data-field="age">
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="18-25">18–25</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="26-35">26–35</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="36-45">36–45</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="46-99" data-i18n="finder.age.plus46">46+</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="finder-group">
+        <legend class="finder-label" data-i18n="finder.budget.label">Presupuesto</legend>
+        <div class="finder-options" role="radiogroup" aria-label="Presupuesto" data-i18n-aria="finder.budget.label" data-field="budget">
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="accesible" data-i18n="finder.budget.accesible">Accesible</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="medio" data-i18n="finder.budget.medio">Gama media</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="alto" data-i18n="finder.budget.alto">Alta gama</button>
+          <button type="button" class="filter-chip" role="radio" aria-checked="false" data-value="cualquiera" data-i18n="finder.budget.cualquiera">Sin preferencia</button>
+        </div>
+      </fieldset>
+
+      <div class="finder-actions">
+        <button type="submit" class="finder-submit" id="finderSubmit" disabled data-i18n="finder.submit">Ver mi recomendación</button>
+        <button type="button" class="finder-reset" id="finderReset" hidden data-i18n="finder.reset">Volver a empezar</button>
+      </div>
+      <p class="finder-hint" id="finderHint" data-i18n="finder.hintIncomplete">Elige una opción en cada pregunta para activar el botón.</p>
+    </form>
+
+    <div class="finder-result" id="finderResult" hidden aria-live="polite"></div>
+  </section>
+
+  <!--
+    =======================================================================
+    CIFRAS DE LA COLECCIÓN
+    Pequeño resumen numérico. Los números aumentan (count-up) una sola vez
+    cuando la sección entra en pantalla.
+    =======================================================================
+  -->
+  <section class="stats" aria-label="La colección en cifras" data-i18n-aria="stats.ariaLabel">
+    <div class="stats-inner">
+      <div class="stat">
+        <span class="stat-number" data-count="11">0</span>
+        <span class="stat-label" data-i18n="stats.fragrances">fragancias en catálogo</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-count="8">0</span>
+        <span class="stat-label" data-i18n="stats.houses">casas de perfumería</span>
+      </div>
+      <div class="stat">
+        <span class="stat-number" data-count="6">0</span>
+        <span class="stat-label" data-i18n="stats.families">familias olfativas</span>
+      </div>
+    </div>
+  </section>
+
+  <!--
+    =======================================================================
+    COLECCIÓN / CATÁLOGO
+    =======================================================================
+    INSTRUCCIONES GENERALES PARA LAS IMÁGENES (léelas antes de publicar):
+
+    1. Crea una carpeta llamada "images" en el mismo directorio donde están
+       index.html, styles.css y script.js.
+    2. Guarda cada foto de frasco con el nombre EXACTO indicado en el
+       comentario que precede a su etiqueta <img>, por ejemplo:
+           images/dior-sauvage-edt.jpg
+    3. Tamaño recomendado: 800 x 1000 px (proporción 4:5), fondo neutro o
+       transparente (PNG/WEBP si el frasco lleva fondo transparente).
+    4. No hace falta tocar el HTML: en cuanto el archivo exista con ese
+       nombre en la carpeta "images", la foto reemplaza automáticamente
+       al marcador de posición (el recuadro punteado con el ícono).
+    5. Si prefieres usar otros nombres de archivo, simplemente actualiza
+       el atributo "src" de cada <img> por la ruta que tú quieras.
+    =======================================================================
+  -->
+  <section class="collection" id="coleccion">
+    <div class="section-head">
+      <h2 data-i18n="collection.title">La colección</h2>
+      <p data-i18n="collection.subtitle">Once fragancias masculinas de alta concentración. Filtra por familia olfativa para encontrar el perfil que buscas.</p>
+    </div>
+
+    <div class="filters" id="filters" role="tablist" aria-label="Filtrar por familia olfativa" data-i18n-aria="collection.filterAriaLabel">
+      <button class="filter-chip is-active" data-filter="todos" role="tab" aria-selected="true" data-i18n="collection.filters.todos">Todos</button>
+      <button class="filter-chip" data-filter="citrico" role="tab" aria-selected="false" data-i18n="collection.filters.citrico">Cítrico</button>
+      <button class="filter-chip" data-filter="aromatico" role="tab" aria-selected="false" data-i18n="collection.filters.aromatico">Aromático</button>
+      <button class="filter-chip" data-filter="amaderado" role="tab" aria-selected="false" data-i18n="collection.filters.amaderado">Amaderado</button>
+      <button class="filter-chip" data-filter="floral" role="tab" aria-selected="false" data-i18n="collection.filters.floral">Floral</button>
+      <button class="filter-chip" data-filter="oriental" role="tab" aria-selected="false" data-i18n="collection.filters.oriental">Oriental</button>
+      <button class="filter-chip" data-filter="gourmand" role="tab" aria-selected="false" data-i18n="collection.filters.gourmand">Gourmand</button>
+    </div>
+
+    <div class="perfume-grid" id="perfumeGrid">
+
+      <!-- ============ 01 · DIOR SAUVAGE EDT ============ -->
+      <article class="perfume-card" data-family="aromatico" data-perfume="dior-sauvage-edt">
+        <p class="perfume-card__index">N.º 01</p>
+        <a class="perfume-card__imglink" href="producto.html?id=dior-sauvage-edt"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/dior-sauvage-edt.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/dior-sauvage-edt.jpg" alt="Frasco de Dior Sauvage EDT" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/dior-sauvage-edt.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Dior</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=dior-sauvage-edt">Sauvage <span class="badge">EDT</span></a></h3>
+          <p class="perfume-card__family">Aromática especiada</p>
+          <p class="perfume-card__desc">El punto de partida del fougère moderno: bergamota de Calabria luminosa sobre una base mineral de ambroxán. Fresca, directa y reconocible desde la primera aplicación.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="dior-sauvage-edt" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="dior-sauvage-edt" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="dior-sauvage-edt" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> bergamota, pimienta · <strong>Corazón</strong> pimienta de Sichuan, lavanda, geranio · <strong>Fondo</strong> ambroxán, cedro, labdanum</p>
+        </div>
+      </article>
+
+      <!-- ============ 02 · PACO RABANNE INVICTUS VICTORY ELIXIR ============ -->
+      <article class="perfume-card" data-family="amaderado" data-perfume="invictus-victory-elixir">
+        <p class="perfume-card__index">N.º 02</p>
+        <a class="perfume-card__imglink" href="producto.html?id=invictus-victory-elixir"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/invictus-victory-elixir.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/invictus-victory-elixir.jpg" alt="Frasco de Paco Rabanne Invictus Victory Elixir" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/invictus-victory-elixir.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Paco Rabanne</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=invictus-victory-elixir">Invictus Victory <span class="badge">Elixir</span></a></h3>
+          <p class="perfume-card__family">Ambarada especiada</p>
+          <p class="perfume-card__desc">La versión más densa de Invictus: cardamomo verde y pimienta negra se funden con incienso y pachulí antes de asentarse en una base espesa de vainilla y haba tonka.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="invictus-victory-elixir" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="invictus-victory-elixir" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="invictus-victory-elixir" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> lavandina, cardamomo verde, pimienta negra · <strong>Corazón</strong> incienso, pachulí · <strong>Fondo</strong> vainilla, haba tonka</p>
+        </div>
+      </article>
+
+      <!-- ============ 03 · DIOR HOMME INTENSE ============ -->
+      <article class="perfume-card" data-family="floral" data-perfume="dior-homme-intense">
+        <p class="perfume-card__index">N.º 03</p>
+        <a class="perfume-card__imglink" href="producto.html?id=dior-homme-intense"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/dior-homme-intense.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/dior-homme-intense.jpg" alt="Frasco de Dior Homme Intense" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/dior-homme-intense.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Dior</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=dior-homme-intense">Homme Intense <span class="badge">EDP</span></a></h3>
+          <p class="perfume-card__family">Floral amaderada</p>
+          <p class="perfume-card__desc">Una lectura poco convencional de la masculinidad: iris polvoriento y un toque de cacao sobre una base de cedro y vetiver. Elegante, cálida y ligeramente golosa.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="dior-homme-intense" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$9.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="dior-homme-intense" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$14.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="dior-homme-intense" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$26.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> lavanda · <strong>Corazón</strong> iris, ambrette, pera · <strong>Fondo</strong> cedro de Virginia, vetiver</p>
+        </div>
+      </article>
+
+      <!-- ============ 04 · VALENTINO UOMO BORN IN ROMA EXTRADOSE ============ -->
+      <article class="perfume-card" data-family="amaderado" data-perfume="valentino-born-in-roma-extradose">
+        <p class="perfume-card__index">N.º 04</p>
+        <a class="perfume-card__imglink" href="producto.html?id=valentino-born-in-roma-extradose"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/valentino-born-in-roma-extradose.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/valentino-born-in-roma-extradose.jpg" alt="Frasco de Valentino Uomo Born in Roma Extradose" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/valentino-born-in-roma-extradose.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Valentino</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=valentino-born-in-roma-extradose">Uomo Born in Roma <span class="badge">Extradose</span></a></h3>
+          <p class="perfume-card__family">Fougère amaderada</p>
+          <p class="perfume-card__desc">La versión más intensa de Born in Roma: especias envolventes y lavandina sobre un fondo de vetiver y madera de guayaco, pensada para la noche.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="valentino-born-in-roma-extradose" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="valentino-born-in-roma-extradose" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="valentino-born-in-roma-extradose" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> mezcla de especias, bergamota · <strong>Corazón</strong> lavandina · <strong>Fondo</strong> vetiver, madera de guayaco</p>
+        </div>
+      </article>
+
+      <!-- ============ 05 · JPG LE MALE ELIXIR ============ -->
+      <article class="perfume-card" data-family="oriental" data-perfume="jpg-le-male-elixir">
+        <p class="perfume-card__index">N.º 05</p>
+        <a class="perfume-card__imglink" href="producto.html?id=jpg-le-male-elixir"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/jpg-le-male-elixir.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/jpg-le-male-elixir.jpg" alt="Frasco de Jean Paul Gaultier Le Male Elixir" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/jpg-le-male-elixir.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Jean Paul Gaultier</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=jpg-le-male-elixir">Le Male <span class="badge">Elixir</span></a></h3>
+          <p class="perfume-card__family">Oriental gourmand</p>
+          <p class="perfume-card__desc">La cara más golosa de Le Male: lavanda y menta al abrir, miel y benjuí en el corazón, y una base de vainilla, tabaco y pachulí que se queda horas en la piel.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-elixir" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-elixir" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-elixir" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> lavanda, menta, bergamota · <strong>Corazón</strong> benjuí, miel, haba tonka · <strong>Fondo</strong> vainilla, tabaco, pachulí</p>
+        </div>
+      </article>
+
+      <!-- ============ 06 · JPG LE BEAU LE PARFUM ============ -->
+      <article class="perfume-card" data-family="gourmand" data-perfume="jpg-le-beau-le-parfum">
+        <p class="perfume-card__index">N.º 06</p>
+        <a class="perfume-card__imglink" href="producto.html?id=jpg-le-beau-le-parfum"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/jpg-le-beau-le-parfum.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/jpg-le-beau-le-parfum.jpg" alt="Frasco de Jean Paul Gaultier Le Beau Le Parfum" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/jpg-le-beau-le-parfum.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Jean Paul Gaultier</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=jpg-le-beau-le-parfum">Le Beau <span class="badge">Le Parfum</span></a></h3>
+          <p class="perfume-card__family">Gourmand tropical</p>
+          <p class="perfume-card__desc">Piña y jengibre dan paso a un corazón de coco que domina toda la fragancia, apoyado por sándalo, ámbar y haba tonka. Una versión más madura del Le Beau original.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-beau-le-parfum" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-beau-le-parfum" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-beau-le-parfum" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> piña, iris, jengibre, ciprés · <strong>Corazón</strong> coco, notas amaderadas · <strong>Fondo</strong> sándalo, haba tonka, ámbar</p>
+        </div>
+      </article>
+
+      <!-- ============ 07 · JPG LE MALE LE PARFUM ============ -->
+      <article class="perfume-card" data-family="oriental" data-perfume="jpg-le-male-le-parfum">
+        <p class="perfume-card__index">N.º 07</p>
+        <a class="perfume-card__imglink" href="producto.html?id=jpg-le-male-le-parfum"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/jpg-le-male-le-parfum.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/jpg-le-male-le-parfum.jpg" alt="Frasco de Jean Paul Gaultier Le Male Le Parfum" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/jpg-le-male-le-parfum.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Jean Paul Gaultier</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=jpg-le-male-le-parfum">Le Male <span class="badge">Le Parfum</span></a></h3>
+          <p class="perfume-card__family">Oriental especiada</p>
+          <p class="perfume-card__desc">Cardamomo especiado, lavanda e iris se funden en una base de vainilla y madera. El equilibrio clásico de la línea Le Male, en una versión más densa.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-le-parfum" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-le-parfum" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="jpg-le-male-le-parfum" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> cardamomo · <strong>Corazón</strong> lavanda, iris · <strong>Fondo</strong> vainilla, notas amaderadas</p>
+        </div>
+      </article>
+
+      <!-- ============ 08 · MANCERA CEDRAT BOISE ============ -->
+      <article class="perfume-card" data-family="citrico" data-perfume="mancera-cedrat-boise">
+        <p class="perfume-card__index">N.º 08</p>
+        <a class="perfume-card__imglink" href="producto.html?id=mancera-cedrat-boise"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/mancera-cedrat-boise.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/mancera-cedrat-boise.jpg" alt="Frasco de Mancera Cedrat Boise" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/mancera-cedrat-boise.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Mancera</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=mancera-cedrat-boise">Cedrat Boise <span class="badge">EDP</span></a></h3>
+          <p class="perfume-card__family">Cítrica amaderada</p>
+          <p class="perfume-card__desc">Cítricos de Sicilia y grosella negra abren paso a jazmín y pachulí, sobre una base de cedro, cuero y almizcle blanco. Fresca de día, envolvente al caer la tarde.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="mancera-cedrat-boise" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$6.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="mancera-cedrat-boise" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="mancera-cedrat-boise" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$19.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> limón siciliano, bergamota, grosella negra · <strong>Corazón</strong> jazmín, pachulí · <strong>Fondo</strong> cedro, cuero, sándalo, almizcle blanco</p>
+        </div>
+      </article>
+
+      <!-- ============ 09 · MYKONOS INCEPTION ============ -->
+      <article class="perfume-card" data-family="floral" data-perfume="mykonos-inception">
+        <p class="perfume-card__index">N.º 09</p>
+        <a class="perfume-card__imglink" href="producto.html?id=mykonos-inception"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/mykonos-inception.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/mykonos-inception.jpg" alt="Frasco de Mykonos Inception" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/mykonos-inception.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Mykonos</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=mykonos-inception">Inception <span class="badge">EDP</span></a></h3>
+          <p class="perfume-card__family">Floral acuática</p>
+          <p class="perfume-card__desc">Naranja, jengibre y té negro sobre un fondo de cedro y almizcle. Una fragancia luminosa y fácil de llevar, pensada para climas cálidos.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="mykonos-inception" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$3.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="mykonos-inception" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$5.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="mykonos-inception" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$8.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> naranja, bergamota, jengibre, limón · <strong>Corazón</strong> té negro, canela, neroli · <strong>Fondo</strong> almizcle, cedro, madera de guayaco</p>
+        </div>
+      </article>
+
+      <!-- ============ 10 · AZZARO THE MOST WANTED EDP INTENSE ============ -->
+      <article class="perfume-card" data-family="gourmand" data-perfume="azzaro-most-wanted-intense">
+        <p class="perfume-card__index">N.º 10</p>
+        <a class="perfume-card__imglink" href="producto.html?id=azzaro-most-wanted-intense"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/azzaro-most-wanted-intense.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/azzaro-most-wanted-intense.jpg" alt="Frasco de Azzaro The Most Wanted EDP Intense" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/azzaro-most-wanted-intense.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">Azzaro</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=azzaro-most-wanted-intense">The Most Wanted <span class="badge">EDP Intense</span></a></h3>
+          <p class="perfume-card__family">Amaderada gourmand</p>
+          <p class="perfume-card__desc">Cardamomo especiado que da paso a un corazón de toffee casi comestible, sobre una base de ámbar amaderado. Dulce, pero sin resultar empalagosa.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="azzaro-most-wanted-intense" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$7.490</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="azzaro-most-wanted-intense" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$11.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="azzaro-most-wanted-intense" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$20.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> cardamomo · <strong>Corazón</strong> toffee · <strong>Fondo</strong> ámbar amaderado</p>
+        </div>
+      </article>
+
+      <!-- ============ 11 · FRENCH AVENUE LIQUID BRUN ============ -->
+      <article class="perfume-card" data-family="oriental" data-perfume="french-avenue-liquid-brun">
+        <p class="perfume-card__index">N.º 11</p>
+        <a class="perfume-card__imglink" href="producto.html?id=french-avenue-liquid-brun"><div class="perfume-card__image">
+          <!--
+            IMAGEN → guarda el archivo como: images/french-avenue-liquid-brun.jpg
+            Tamaño sugerido: 800×1000px
+          -->
+          <img src="images/french-avenue-liquid-brun.jpg" alt="Frasco de French Avenue Liquid Brun" loading="lazy">
+          <div class="image-placeholder">
+            <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+            <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+            <code>images/french-avenue-liquid-brun.jpg</code>
+            <span data-i18n="collection.imgSize">800 × 1000&nbsp;px sugerido</span>
+          </div>
+        </div></a>
+        <div class="perfume-card__body">
+          <p class="perfume-card__house">French Avenue</p>
+          <h3 class="perfume-card__name"><a class="perfume-card__namelink" href="producto.html?id=french-avenue-liquid-brun">Liquid Brun <span class="badge">EDP</span></a></h3>
+          <p class="perfume-card__family">Oriental especiada</p>
+          <p class="perfume-card__desc">Canela y cardamomo se encuentran con vainilla bourbon y praliné, sobre una base de ámbar y madera de guayaco. Cálida, dulce y de larga duración.</p>
+          <div class="perfume-card__decants">
+            <p class="decants-label" data-i18n="collection.decantsLabel">Decants disponibles</p>
+            <ul class="decant-list">
+              <li><button type="button" class="decant-buy" data-perfume="french-avenue-liquid-brun" data-ml="3"><span class="decant-ml">3 ml</span><span class="decant-price">$3.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="french-avenue-liquid-brun" data-ml="5"><span class="decant-ml">5 ml</span><span class="decant-price">$5.990</span></button></li>
+              <li><button type="button" class="decant-buy" data-perfume="french-avenue-liquid-brun" data-ml="10"><span class="decant-ml">10 ml</span><span class="decant-price">$8.990</span></button></li>
+            </ul>
+          </div>
+          <p class="perfume-card__notes"><strong>Salida</strong> canela, cardamomo, bergamota, azahar · <strong>Corazón</strong> vainilla bourbon, elemí · <strong>Fondo</strong> praliné, almizcle, ambroxán, madera de guayaco</p>
+        </div>
+      </article>
+
+    </div><!-- /.perfume-grid -->
+
+    <p class="filters-empty" id="filtersEmpty" hidden data-i18n="collection.filtersEmpty">No hay fragancias en esta familia todavía.</p>
+  </section>
+
+  <!--
+    =======================================================================
+    COMPRAR
+    =======================================================================
+    Al hacer clic en cualquier fila de decant (catálogo o recomendador),
+    este panel se llena con esa fragancia y ese formato. Desde acá se puede
+    "Agregar al carrito" (cart.js) o "Comprar ahora" (pedido.html, pago
+    directo de ese único producto). Toda la lógica vive en script.js,
+    función openBuy() / renderBuyPanel().
+    =======================================================================
+  -->
+  <section class="buy" id="comprar">
+    <div class="section-head">
+      <h2 data-i18n="buy.title">Comprar un decant</h2>
+      <p data-i18n="buy.subtitle">Elige el formato desde la colección — al hacer clic, aparece aquí para que lo agregues al carrito o lo compres ahora.</p>
+    </div>
+
+    <div class="buy-panel" id="buyPanel">
+      <p class="buy-empty" data-i18n="buy.empty">Todavía no elegiste un decant. Ve a la <a href="#coleccion">colección</a> y haz clic en el formato que quieras (3, 5 o 10&nbsp;ml).</p>
+    </div>
+  </section>
+
+  <!--
+    =======================================================================
+    INFORMACIÓN
+    Medios de pago y envíos. Los íconos de tarjeta son genéricos (no son
+    los logos oficiales de Visa/Mastercard) para no reproducir marcas
+    registradas de terceros; el nombre de cada medio de pago va como texto.
+    =======================================================================
+  -->
+  <section class="info" id="informacion">
+    <div class="section-head">
+      <h2 data-i18n="info.title">Información</h2>
+      <p data-i18n="info.subtitle">Medios de pago y despacho para tus decants.</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-block">
+        <h3 data-i18n="info.paymentTitle">Medios de pago</h3>
+        <ul class="info-list">
+          <li>
+            <svg class="info-icon" viewBox="0 0 24 16" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 5.5H23" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Visa</span>
+          </li>
+          <li>
+            <svg class="info-icon" viewBox="0 0 24 16" fill="none" aria-hidden="true"><rect x="1" y="1" width="22" height="14" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M1 5.5H23" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Mastercard</span>
+          </li>
+          <li>
+            <svg class="info-icon" viewBox="0 0 24 16" fill="none" aria-hidden="true"><path d="M2 6.5L12 1L22 6.5" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M3 6.5V14M8 6.5V14M16 6.5V14M21 6.5V14" stroke="currentColor" stroke-width="1.2"/><path d="M1.5 14.5H22.5" stroke="currentColor" stroke-width="1.2"/></svg>
+            <span>Cuenta RUT</span>
+          </li>
+        </ul>
+      </div>
+      <div class="info-block">
+        <h3 data-i18n="info.shippingTitle">Envíos</h3>
+        <p data-i18n="info.shippingText">Hacemos despacho a todo Chile a través de Starken. El costo y el tiempo de entrega dependen de tu comuna; te los confirmamos al coordinar el pedido.</p>
+      </div>
+    </div>
+
+    <p class="info-note" data-i18n="info.note">¿Quieres hacer un pedido? Escríbenos desde la sección <a href="#contacto">Contacto</a>.</p>
+  </section>
+
+  <!--
+    =======================================================================
+    CONTACTO
+    Nota: hola@uperfumes.com y @uperfumes son marcadores de ejemplo.
+    Reemplázalos por tus datos reales de contacto.
+    =======================================================================
+  -->
+  <section class="contact" id="contacto">
+    <div class="contact-inner">
+      <h2 data-i18n="contact.title">Contacto</h2>
+      <p data-i18n="contact.subtitle">¿Buscas una fragancia en particular o quieres más información sobre alguna casa del catálogo? Escríbenos.</p>
+      <dl class="contact-list">
+        <div>
+          <dt data-i18n="contact.email">Correo</dt>
+          <dd><a href="mailto:hola@uperfumes.com">hola@uperfumes.com</a></dd>
+        </div>
+        <div>
+          <dt data-i18n="contact.instagram">Instagram</dt>
+          <dd><a href="#" target="_blank" rel="noopener">@uperfumes</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <a href="#inicio" class="logo small">UPerfumes</a>
+    <p data-i18n="footer.disclaimer">© 2026 UPerfumes. Todas las marcas y nombres de fragancias mencionados pertenecen a sus respectivos propietarios. UPerfumes no está afiliado a dichas casas de perfumería.</p>
+  </div>
+</footer>
+
+<!--
+  =========================================================================
+  HUB
+  Panel fijo (no se mueve con el scroll) con acceso directo a cada sección
+  de la página — resalta la sección activa a medida que se hace scroll —
+  y el interruptor de modo claro/oscuro. En pantallas angostas se reduce
+  a un botón circular con solo el interruptor.
+
+  Nota sobre el modo claro/oscuro: la preferencia se aplica al instante
+  con JavaScript (atributo data-theme en <html>) y no se guarda entre
+  recargas de página — por diseño, para no depender de almacenamiento
+  local del navegador. Si quieres que se recuerde, dímelo y lo agrego.
+  =========================================================================
+-->
+<aside class="page-hub" id="pageHub" aria-label="Navegación rápida y modo de color" data-i18n-aria="hub.ariaLabel">
+  <nav class="hub-nav" aria-label="Ir a sección" data-i18n-aria="hub.navAriaLabel">
+    <a href="#inicio" class="hub-link" data-section="inicio">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.inicio">Inicio</span>
+    </a>
+    <a href="#recomendador" class="hub-link" data-section="recomendador">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.recomendador">Recomendador</span>
+    </a>
+    <a href="#coleccion" class="hub-link" data-section="coleccion">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.coleccion">Colección</span>
+    </a>
+    <a href="#comprar" class="hub-link" data-section="comprar">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.comprar">Comprar</span>
+    </a>
+    <a href="#informacion" class="hub-link" data-section="informacion">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.informacion">Información</span>
+    </a>
+    <a href="#contacto" class="hub-link" data-section="contacto">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.contacto">Contacto</span>
+    </a>
+  </nav>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Cambiar a modo claro">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M10 1.5V3.5M10 16.5V18.5M18.5 10H16.5M3.5 10H1.5M15.6 4.4L14.2 5.8M5.8 14.2L4.4 15.6M15.6 15.6L14.2 14.2M5.8 5.8L4.4 4.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17 11.5A7 7 0 018.5 3a7 7 0 108.5 8.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <!--
+    Selector de idioma: español (bandera de España), inglés (bandera del
+    Reino Unido) y portugués (bandera de Portugal). Cambia solo el texto
+    de la página (ver LANG_DICT en script.js); los nombres de marcas y
+    perfumes, y el correo del pedido, se mantienen igual en los tres.
+  -->
+  <div class="hub-lang" id="langSwitch" role="group" aria-label="Idioma / Language / Idioma">
+    <button type="button" class="hub-lang__btn is-active" data-lang="es" aria-pressed="true" aria-label="Español" title="Español">
+      <span class="hub-lang__flag" aria-hidden="true">🇪🇸</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="en" aria-pressed="false" aria-label="English" title="English">
+      <span class="hub-lang__flag" aria-hidden="true">🇬🇧</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português">
+      <span class="hub-lang__flag" aria-hidden="true">🇵🇹</span>
+    </button>
+  </div>
+</aside>
+
+<script src="cart.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

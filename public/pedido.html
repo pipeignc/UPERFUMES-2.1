@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="orderPageTitle">Confirmar pedido — UPerfumes</title>
+<meta name="description" data-i18n-content="orderPageDesc" content="Confirma tu pedido de decant: formato, correo, método de pago y dirección de entrega.">
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!--
+  =========================================================================
+  COMPRAR AHORA (un solo producto)
+  =========================================================================
+  Se llega desde "Comprar ahora" (catálogo o ficha de producto) con la
+  selección en la URL: pedido.html?id=...&ml=...&qty=...
+  Es el pago directo de UN producto, sin pasar por el carrito. El resumen
+  se arma con GET /api/catalog; el monto real lo calcula el servidor.
+  El formulario es el mismo del carrito (checkout.js):
+    - "webpay"        → redirige al formulario de pago de Transbank.
+    - "transferencia" → muestra los datos bancarios para transferir.
+  =========================================================================
+-->
+
+<header class="order-header">
+  <div class="order-header__inner">
+    <a href="index.html#coleccion" class="order-back">
+      <svg width="10" height="16" viewBox="0 0 10 16" fill="none" aria-hidden="true">
+        <path d="M9 1L1 8L9 15" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span data-i18n="order.back">Volver a la colección</span>
+    </a>
+    <a href="index.html#inicio" class="logo small">UPerfumes</a>
+  </div>
+</header>
+
+<main class="order-main">
+  <h1 data-i18n="order.h1">Confirmar pedido</h1>
+  <p class="order-intro" data-i18n="order.intro">Revisa el decant elegido y completa tus datos. Si pagas con tarjeta, te llevamos al formulario seguro de Webpay; si prefieres transferencia, te mostramos los datos al confirmar.</p>
+
+  <!-- Resumen del producto: lo llena pedido.js leyendo la URL -->
+  <div class="order-summary" id="orderSummary" hidden>
+    <div class="perfume-card__image" id="orderImageWrap">
+      <img id="orderImage" src="" alt="" loading="eager">
+      <div class="image-placeholder">
+        <svg class="placeholder-icon" viewBox="0 0 48 64" fill="none" aria-hidden="true"><path d="M18 8H30V16C30 16 38 21 38 31V56C38 59 35.5 61 33 61H15C12.5 61 10 59 10 56V31C10 21 18 16 18 16V8Z" stroke="currentColor" stroke-width="1.4"/><path d="M15 4H33V8H15V4Z" stroke="currentColor" stroke-width="1.4"/></svg>
+        <p data-i18n="collection.imgPlaceholder">Coloca aquí la imagen</p>
+        <code id="orderImageCode"></code>
+      </div>
+    </div>
+    <div>
+      <p class="order-summary__house" id="orderHouse"></p>
+      <p class="order-summary__name" id="orderName"></p>
+      <p class="order-summary__price" id="orderPrice"></p>
+    </div>
+  </div>
+
+  <!-- Se muestra si alguien abre esta página sin venir del catálogo -->
+  <div class="order-empty" id="orderEmpty" hidden>
+    <p data-i18n="order.empty">No encontramos ningún decant seleccionado. Vuelve a la <a href="index.html#coleccion">colección</a> y elige un formato para empezar tu pedido.</p>
+  </div>
+
+  <form class="order-form" id="orderForm" hidden novalidate>
+    <div class="order-field">
+      <label for="fName" data-i18n="order.name.label">Nombre completo</label>
+      <input type="text" id="fName" name="nombre" placeholder="Tu nombre" data-i18n-placeholder="order.name.placeholder" required>
+    </div>
+
+    <div class="order-field">
+      <label for="fEmail" data-i18n="order.email.label">Correo electrónico</label>
+      <input type="email" id="fEmail" name="correo" placeholder="tu@correo.com" data-i18n-placeholder="order.email.placeholder" required>
+      <p class="order-hint" data-i18n="order.email.hint">Lo usamos para confirmarte el pedido y coordinar el pago.</p>
+    </div>
+
+    <div class="order-field">
+      <label id="paymentLabel" data-i18n="order.payment.label">Método de pago</label>
+      <div class="order-radio-group" role="radiogroup" aria-labelledby="paymentLabel">
+        <label class="order-radio">
+          <input type="radio" name="pago" value="webpay" checked>
+          <span>
+            <span class="order-radio__label" data-i18n="order.payment.card.label">Tarjeta de crédito o débito (Webpay)</span>
+            <span class="order-radio__desc" data-i18n="order.payment.card.desc">Pagas ahora en el formulario seguro de Transbank.</span>
+          </span>
+        </label>
+        <label class="order-radio">
+          <input type="radio" name="pago" value="transferencia">
+          <span>
+            <span class="order-radio__label" data-i18n="order.payment.transfer.label">Transferencia a Cuenta RUT</span>
+            <span class="order-radio__desc" data-i18n="order.payment.transfer.desc">Te enviamos el número de cuenta al confirmar.</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="order-field">
+      <label for="fAddress" data-i18n="order.address.label">Dirección de entrega</label>
+      <textarea id="fAddress" name="direccion" placeholder="Calle, número, comuna y región" data-i18n-placeholder="order.address.placeholder" required></textarea>
+      <p class="order-hint" data-i18n="order.address.hint">El despacho se hace a todo Chile mediante Starken.</p>
+    </div>
+
+    <div class="order-field">
+      <label for="fNotes" data-i18n="order.notes.label">Notas para el pedido (opcional)</label>
+      <textarea id="fNotes" name="notas" placeholder="Referencias de despacho, horario, etc." data-i18n-placeholder="order.notes.placeholder"></textarea>
+    </div>
+
+    <button type="submit" class="order-submit" id="orderSubmit" data-i18n="order.submit.webpay">Pagar con Webpay</button>
+
+    <div class="order-error" id="orderError" hidden>
+      <p id="orderErrorGeneric" data-i18n="order.error.generic" hidden>No pudimos procesar tu pedido. Intenta de nuevo.</p>
+      <p id="orderErrorNetwork" data-i18n="order.error.network" hidden>No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.</p>
+      <p id="orderErrorEmpty" data-i18n="order.error.empty" hidden>No hay productos en tu pedido.</p>
+      <p id="orderErrorCustom" hidden></p>
+    </div>
+  </form>
+
+  <!-- Se muestra tras un pedido por transferencia (los pedidos con Webpay
+       redirigen fuera del sitio, así que no pasan por acá). Las etiquetas
+       quedan fijas en el HTML con data-i18n para que se traduzcan solas;
+       pedido.js solo llena los valores (número de pedido, datos del banco). -->
+  <div class="order-result" id="orderResult" hidden>
+    <h2 data-i18n="order.result.title">¡Pedido recibido!</h2>
+    <p>
+      <span data-i18n="order.result.transferIntro">Tu número de pedido es</span>
+      <strong class="order-result__ref" id="resultBuyOrder"></strong>
+    </p>
+    <p data-i18n="order.result.transferInstructions">Transfiere el monto a estos datos y envíanos el comprobante a hola@uperfumes.com para coordinar el envío.</p>
+    <dl>
+      <dt data-i18n="order.result.amount">Monto a transferir</dt><dd id="resultAmount"></dd>
+      <dt data-i18n="order.result.bank">Banco</dt><dd id="resultBank"></dd>
+      <dt data-i18n="order.result.accountType">Tipo de cuenta</dt><dd id="resultAccountType"></dd>
+      <dt data-i18n="order.result.accountNumber">Número de cuenta</dt><dd id="resultAccountNumber"></dd>
+      <dt data-i18n="order.result.holder">Titular</dt><dd id="resultHolder"></dd>
+      <dt data-i18n="order.result.rut">RUT</dt><dd id="resultRut"></dd>
+      <dt data-i18n="order.result.email">Correo</dt><dd id="resultEmail"></dd>
+    </dl>
+    <a href="index.html#coleccion" class="order-back-link" data-i18n="order.result.backToCatalog">Volver al catálogo</a>
+  </div>
+</main>
+
+<!-- Transbank exige volver a su formulario de pago mediante un POST con
+     token_ws, no con una redirección GET normal: por eso este formulario
+     oculto, que pedido.js completa y envía solo. -->
+<form id="webpayRedirectForm" method="POST" action="" hidden>
+  <input type="hidden" name="token_ws" value="">
+</form>
+
+<!--
+  HUB reducido: solo el interruptor de modo claro/oscuro y el selector de
+  idioma (sin los puntos de navegación por sección, que no aplican en esta
+  página). Usa los mismos id/clases que index.html a propósito, para que
+  la lógica de script.js —ya incluido abajo— los reconozca sin cambios.
+-->
+<aside class="page-hub" id="pageHub" aria-label="Modo de color e idioma" data-i18n-aria="hub.ariaLabelLite">
+  <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Cambiar a modo claro">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M10 1.5V3.5M10 16.5V18.5M18.5 10H16.5M3.5 10H1.5M15.6 4.4L14.2 5.8M5.8 14.2L4.4 15.6M15.6 15.6L14.2 14.2M5.8 5.8L4.4 4.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17 11.5A7 7 0 018.5 3a7 7 0 108.5 8.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <div class="hub-lang" id="langSwitch" role="group" aria-label="Idioma / Language / Idioma">
+    <button type="button" class="hub-lang__btn is-active" data-lang="es" aria-pressed="true" aria-label="Español" title="Español">
+      <span class="hub-lang__flag" aria-hidden="true">🇪🇸</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="en" aria-pressed="false" aria-label="English" title="English">
+      <span class="hub-lang__flag" aria-hidden="true">🇬🇧</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português">
+      <span class="hub-lang__flag" aria-hidden="true">🇵🇹</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Orden: cart.js (panel del carrito) y checkout.js (formulario de pago)
+     definen su API; pedido.js fija la foto antes de que script.js revise
+     qué imágenes faltan, así que va antes que script.js. -->
+<script src="cart.js"></script>
+<script src="checkout.js"></script>
+<script src="pedido.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
