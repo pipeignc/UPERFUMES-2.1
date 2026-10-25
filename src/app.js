@@ -51,6 +51,9 @@ app.use("/api/orders", ordersLimiter);
 app.use("/api", ordersRouter);
 app.use("/webpay", webpayRouter);
 
+app.get("/asesor/", (req, res) => res.redirect(308, "/asesor.html"));
+require("../integration/python-features.cjs")(app);
+
 app.use(express.static(path.join(__dirname, "..", "public")));
 
 app.get("/health", (req, res) => res.json({ ok: true }));

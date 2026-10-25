@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/advisor.css">
 </head>
 <body>
 
@@ -31,7 +32,9 @@
   <div class="order-header__inner">
     <a href="index.html#inicio" class="logo small">UPerfumes</a>
   </div>
-</header>
+<nav class="advisor-shortcuts" aria-label="Asesor de perfumes"><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
+<a href="/asesor.html#chat" data-i18n="advisor.chat">Chat</a>
+<a href="/asesor.html#compare" data-i18n="advisor.compare">Comparador</a></nav></header>
 
 <main class="order-main">
   <div id="confirmLoading">
@@ -70,7 +73,9 @@
   </div>
 </main>
 
-<aside class="page-hub" id="pageHub" aria-label="Modo de color e idioma" data-i18n-aria="hub.ariaLabelLite">
+<aside class="page-hub" id="pageHub" aria-label="Modo de color e idioma" data-i18n-aria="hub.ariaLabelLite"><nav class="hub-nav" aria-label="Asesor de perfumes"><a href="/asesor.html#recommend" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.recommend">Recomendador IA</span></a>
+<a href="/asesor.html#chat" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.chat">Chat</span></a>
+<a href="/asesor.html#compare" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.compare">Comparador</span></a></nav>
   <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Cambiar a modo claro">
     <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
       <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.3"/>

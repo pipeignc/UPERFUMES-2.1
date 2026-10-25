@@ -227,3 +227,33 @@ Esto no es un sitio estático: necesita un proceso de Node corriendo
 - El carrito vive en el navegador de cada persona: si cambia de dispositivo
   no lo lleva consigo. Si más adelante quieres cuentas de usuario, este es el
   punto a evolucionar.
+
+
+## Asesor integrado: recomendador ML, chat y comparador
+
+Desde la raíz de este repositorio (donde está `package.json`):
+
+```bash
+npm ci
+bash scripts/setup-python.sh
+```
+
+El setup requiere Python 3.12, instala las dependencias en `.venv` y entrena el
+modelo con el dataset incluido. Inicia ambos procesos en terminales separadas:
+
+```bash
+npm run python:dev
+# En otra terminal, desde la misma carpeta:
+npm run dev
+```
+
+La tienda muestra los tres accesos arriba a la derecha y en el HUB. La página
+`/asesor.html` comparte colores, modo claro/oscuro, carrito y navegación con
+la tienda. Incluye enlaces para volver y entrar al catálogo. El recomendador
+original sigue disponible en la portada. Más detalles en
+[FUNCIONALIDADES_PYTHON.md](docs/FUNCIONALIDADES_PYTHON.md).
+
+Validación: `npm test`, `npm run test:python` y `npm run test:python-ui`.
+Las pruebas utilizan bases temporales y pagos simulados. Para desarrollo sin
+abrir la base de pedidos incluida, configura `DATABASE_PATH` con una ruta local
+separada, por ejemplo `./data/cloud-dev/uperfumes.sqlite`.

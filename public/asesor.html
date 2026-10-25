@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asesor de fragancias — UPerfumes</title>
+<meta name="description" content="Elige el formato de tu decant y agrégalo al carrito o cómpralo ahora.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2314100D'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='30' fill='%23C6A15B' text-anchor='middle'%3EU%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/advisor.css">
+</head>
+<body class="advisor-page"><header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="/index.html#inicio" class="logo">UPerfumes</a>
+
+    <nav class="site-nav" id="siteNav"><a href="/asesor.html#recommend" data-i18n="advisor.recommend">Recomendador IA</a>
+<a href="/asesor.html#chat" data-i18n="advisor.chat">Chat</a>
+<a href="/asesor.html#compare" data-i18n="advisor.compare">Comparador</a>
+      <a href="/index.html#recomendador" data-i18n="nav.recomendador">Recomendador</a>
+      <a href="/index.html#coleccion" data-i18n="nav.coleccion">Colección</a>
+      <a href="/index.html#comprar" data-i18n="nav.comprar">Comprar</a>
+      <a href="/index.html#informacion" data-i18n="nav.informacion">Información</a>
+      <a href="/index.html#contacto" data-i18n="nav.contacto">Contacto</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" data-i18n-aria="navToggleOpen" aria-expanded="false" aria-controls="siteNav">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header><div class="advisor-return"><a href="/index.html" class="order-back">← Volver a la tienda</a><a href="/index.html#coleccion" class="order-back" data-i18n="order.back">Volver a la colección</a></div><main class="advisor-main">
+    <section class="advisor-hero">
+      <div><span class="eyebrow">UN PERFUME. MUCHAS POSIBILIDADES.</span><h1>Tu próximo aroma<br>empieza <em>aquí.</em></h1><p>Descubre fragancias según tu estilo, explora precios y resuelve tus dudas con tu asesor local.</p></div>
+      <aside class="rate-card"><label for="rate">Tipo de cambio referencial</label><div class="rate-row"><span>1 USD =</span><input id="rate" type="number" min="0.0001" max="100000" step="0.0001" value="950" required><span>CLP</span></div><small>950 es una tasa de ejemplo editable, no una cotización actual. Los precios del dataset son referenciales y no confirman stock.</small></aside>
+    </section>
+    <p id="service-status" class="status" role="status">Conectando con el asesor…</p>
+    <nav class="tabs" aria-label="Herramientas de asesoría">
+      <button type="button" data-panel="recommend" aria-pressed="true" aria-controls="recommend">01 · Encuentra tu perfume</button>
+      <button type="button" data-panel="compare" aria-pressed="false" aria-controls="compare">02 · Compara por presupuesto</button>
+      <button type="button" data-panel="chat" aria-pressed="false" aria-controls="chat">03 · Conversa con tu asesor</button>
+    </nav>
+    <section id="recommend" class="panel">
+      <div class="section-heading"><div><span class="eyebrow">HECHO A TU MEDIDA</span><h2>Cuéntanos un poco de ti</h2></div><p>Las sugerencias exploran todos los perfumes del dataset, incluso los que aún no están en la tienda.</p></div>
+      <form id="recommend-form" class="profile-form">
+        <label>Edad<input name="age" type="number" value="25" min="1" max="120" required></label>
+        <label>Clima<select name="climate" id="climate" required></select></label>
+        <label>Ocasión<select name="occasion" id="occasion" required></select></label>
+        <label>Género de la fragancia<select name="gender" id="gender" required></select></label>
+        <label>Presupuesto en CLP<input name="budget_clp" type="number" min="1" max="100000000" step="1" value="100000" required></label>
+        <button class="primary" type="submit">Descubrir mis perfumes <span aria-hidden="true">↗</span></button>
+      </form>
+      <p id="recommend-message" role="status" class="feedback">Completa tu perfil para descubrir tres sugerencias.</p>
+      <div id="recommend-results" class="results" aria-label="Perfumes recomendados"></div>
+      <p class="fineprint">El puntaje expresa cómo ordena el modelo las sugerencias; no garantiza que el aroma te guste. La presentación de los precios del dataset no está especificada.</p>
+    </section>
+    <section id="compare" class="panel" hidden>
+      <div class="section-heading"><div><span class="eyebrow">ELIGE CON CALMA</span><h2>Un aroma para tu presupuesto</h2></div><p>Compara alternativas del dataset por su precio referencial, de menor a mayor.</p></div>
+      <form id="compare-form" class="compare-form">
+        <label>Buscar perfume<input name="query" type="search" maxlength="120" placeholder="Por ejemplo, Sauvage"></label>
+        <label>Presupuesto máximo en CLP<input name="budget_clp" type="number" min="1" max="100000000" step="1" value="100000" required></label>
+        <button class="primary" type="submit">Comparar alternativas</button>
+      </form>
+      <p id="compare-message" role="status" class="feedback">Encuentra opciones sin exceder tu presupuesto.</p>
+      <div class="table-scroll"><table id="compare-table" hidden><caption>Precios referenciales del dataset</caption><thead><tr><th>Perfume</th><th>Precio en CLP</th><th>Saldo del presupuesto</th></tr></thead><tbody id="compare-results"></tbody></table></div>
+    </section>
+    <section id="chat" class="panel" hidden>
+      <div class="section-heading"><div><span class="eyebrow">ESTAMOS PARA AYUDARTE</span><h2>Conversa con tu asesor</h2></div><p>Asistente local que consulta información del proyecto y del dataset. Sin servicios de IA externos.</p></div>
+      <div id="chat-log" class="chat-log" role="log" aria-live="polite" aria-label="Conversación con el asesor"><article class="bubble assistant"><strong>Asesor UPerfumes</strong><p>¡Hola! Pregúntame por un perfume, su precio referencial o cómo funciona el recomendador.</p></article></div>
+      <div class="suggestions"><button type="button" data-question="¿Cuánto cuesta Sauvage EDP?">Precio de Sauvage EDP</button><button type="button" data-question="¿Cómo funciona el recomendador?">Cómo elegir un perfume</button><button type="button" data-question="¿Qué métodos de pago hay?">Métodos de pago</button></div>
+      <form id="chat-form" class="chat-form"><label class="sr-only" for="chat-message">Tu mensaje</label><input id="chat-message" name="message" maxlength="1000" placeholder="Escribe tu pregunta…" autocomplete="off" required><button class="primary" type="submit">Enviar</button></form>
+      <p id="chat-feedback" class="feedback" role="status"></p>
+      <p class="fineprint">El asistente recupera respuestas conocidas; no es un modelo generativo. No compartas datos personales ni información de pago.</p>
+    </section>
+  </main><aside class="page-hub" id="pageHub" aria-label="Navegación rápida y modo de color" data-i18n-aria="hub.ariaLabel">
+  <nav class="hub-nav" aria-label="Ir a sección" data-i18n-aria="hub.navAriaLabel">
+    <a href="/index.html#inicio" class="hub-link" data-section="inicio">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.inicio">Inicio</span>
+    </a>
+    <a href="/index.html#recomendador" class="hub-link" data-section="recomendador">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.recomendador">Recomendador</span>
+    </a>
+    <a href="/index.html#coleccion" class="hub-link" data-section="coleccion">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.coleccion">Colección</span>
+    </a>
+    <a href="/index.html#comprar" class="hub-link" data-section="comprar">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.comprar">Comprar</span>
+    </a>
+    <a href="/index.html#informacion" class="hub-link" data-section="informacion">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.informacion">Información</span>
+    </a>
+    <a href="/index.html#contacto" class="hub-link" data-section="contacto">
+      <span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="nav.contacto">Contacto</span>
+    </a>
+  <a href="/asesor.html#recommend" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.recommend">Recomendador IA</span></a>
+<a href="/asesor.html#chat" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.chat">Chat</span></a>
+<a href="/asesor.html#compare" class="hub-link"><span class="hub-dot" aria-hidden="true"></span><span class="hub-text" data-i18n="advisor.compare">Comparador</span></a></nav>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <button type="button" class="theme-toggle" id="themeToggle" role="switch" aria-checked="false" aria-label="Cambiar a modo claro">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <circle cx="10" cy="10" r="3.6" stroke="currentColor" stroke-width="1.3"/>
+      <path d="M10 1.5V3.5M10 16.5V18.5M18.5 10H16.5M3.5 10H1.5M15.6 4.4L14.2 5.8M5.8 14.2L4.4 15.6M15.6 15.6L14.2 14.2M5.8 5.8L4.4 4.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+    </svg>
+    <span class="theme-toggle__track"><span class="theme-toggle__thumb"></span></span>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M17 11.5A7 7 0 018.5 3a7 7 0 108.5 8.5Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="hub-divider" aria-hidden="true"></div>
+
+  <!--
+    Selector de idioma: español (bandera de España), inglés (bandera del
+    Reino Unido) y portugués (bandera de Portugal). Cambia solo el texto
+    de la página (ver LANG_DICT en script.js); los nombres de marcas y
+    perfumes, y el correo del pedido, se mantienen igual en los tres.
+  -->
+  <div class="hub-lang" id="langSwitch" role="group" aria-label="Idioma / Language / Idioma">
+    <button type="button" class="hub-lang__btn is-active" data-lang="es" aria-pressed="true" aria-label="Español" title="Español">
+      <span class="hub-lang__flag" aria-hidden="true">🇪🇸</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="en" aria-pressed="false" aria-label="English" title="English">
+      <span class="hub-lang__flag" aria-hidden="true">🇬🇧</span>
+    </button>
+    <button type="button" class="hub-lang__btn" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português">
+      <span class="hub-lang__flag" aria-hidden="true">🇵🇹</span>
+    </button>
+  </div>
+</aside><script src="/cart.js"></script><script src="/script.js"></script><script src="/advisor.js"></script></body></html>

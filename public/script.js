@@ -459,6 +459,7 @@
   var I18N = {
     es: {
       skipLink: "Saltar al catálogo",
+      "advisor.recommend": "Recomendador IA", "advisor.chat": "Chat", "advisor.compare": "Comparador",
       "nav.inicio": "Inicio", "nav.recomendador": "Recomendador", "nav.coleccion": "Colección",
       "nav.comprar": "Comprar", "nav.informacion": "Información", "nav.contacto": "Contacto",
       navToggleOpen: "Abrir menú", navToggleClose: "Cerrar menú",
@@ -580,6 +581,7 @@
     },
     en: {
       skipLink: "Skip to catalog",
+      "advisor.recommend": "AI finder", "advisor.chat": "Chat", "advisor.compare": "Compare",
       "nav.inicio": "Home", "nav.recomendador": "Finder", "nav.coleccion": "Collection",
       "nav.comprar": "Buy", "nav.informacion": "Info", "nav.contacto": "Contact",
       navToggleOpen: "Open menu", navToggleClose: "Close menu",
@@ -701,6 +703,7 @@
     },
     pt: {
       skipLink: "Saltar para o catálogo",
+      "advisor.recommend": "Recomendador IA", "advisor.chat": "Chat", "advisor.compare": "Comparador",
       "nav.inicio": "Início", "nav.recomendador": "Recomendador", "nav.coleccion": "Coleção",
       "nav.comprar": "Comprar", "nav.informacion": "Informação", "nav.contacto": "Contacto",
       navToggleOpen: "Abrir menu", navToggleClose: "Fechar menu",
