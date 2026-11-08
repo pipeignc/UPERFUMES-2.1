@@ -1,0 +1,32 @@
+.shop-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; margin:1.5rem 0; }
+.shop-filters label { display:flex; flex-direction:column; gap:.5rem; }
+.shop-filters input,.shop-filters select,#shippingRegion { font:inherit; color:var(--ink); background:var(--bg-panel); border:1px solid var(--line-strong); padding:.8rem; min-width:0; }
+.shop-filters input[type=checkbox] { align-self:flex-start; }
+.shop-from { color:var(--gold); font-size:.9rem; margin-bottom:1rem; }
+.shop-packs { max-width:1180px; margin:3rem auto; padding:var(--gutter); scroll-margin-top:6rem; }
+.shop-packs h2,.shop-details h2 { font:400 2rem var(--serif); margin-bottom:1rem; }
+.shop-pack-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; margin-top:2rem; }
+.shop-pack { padding:2rem; background:var(--bg-panel); border:1px solid var(--line); }
+.shop-pack h3 { font:400 1.7rem var(--serif); margin-bottom:1rem; }
+.shop-pack li { margin:.5rem 0 .5rem 1rem; }
+.shop-pack p { margin:1rem 0; }
+.shop-pack strong { color:var(--gold); }
+.shop-details { margin-top:2rem; padding-top:1.5rem; border-top:1px solid var(--line); }
+.shop-details p { margin:1rem 0; }
+.shop-details img { width:100%; max-width:300px; }
+.shop-details figcaption { font-size:.85rem; color:var(--ink-soft); }
+.shipping-summary { padding:1rem; margin:1rem 0; background:var(--bg-panel); border:1px solid var(--line); }
+.shipping-summary label { display:grid; gap:.5rem; }
+.shipping-summary p { margin-top:.8rem; }
+.shipping-summary strong { color:var(--gold); }
+@media(max-width:760px) {
+  .shop-filters,.shop-pack-grid { grid-template-columns:1fr; }
+  .product-layout { display:flex; flex-direction:column; }
+  .product-info { order:-1; width:100%; }
+  .product-actions { position:fixed; left:0; right:0; bottom:0; z-index:460; padding:.8rem; background:var(--bg-panel); border:1px solid var(--line); }
+  .product-info:not([hidden]) .product-total { position:fixed; bottom:4.5rem; left:0; right:0; z-index:460; margin:0; padding:.6rem 1rem; background:var(--bg-panel); }
+  .product-main { padding-bottom:12rem; }
+  .order-submit { position:sticky; bottom:0; z-index:460; }
+  body:has(.product-actions) .page-hub,body:has(#orderForm) .page-hub { bottom:8rem; }
+  .shipping-summary { position:sticky; bottom:4.5rem; z-index:459; }
+}

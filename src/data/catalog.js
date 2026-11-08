@@ -57,7 +57,9 @@ const CATALOG = {
 };
 
 function getProduct(perfumeId) {
-  return CATALOG[perfumeId] || null;
+  const shop = require('../services/shop');
+  if (Object.hasOwn(CATALOG, perfumeId)) return shop.enrich(perfumeId, CATALOG[perfumeId]);
+  return shop.packs(CATALOG).find(p => p.id === perfumeId) || null;
 }
 
 function getPrice(perfumeId, ml) {
@@ -70,12 +72,7 @@ function getPrice(perfumeId, ml) {
 function listCatalog() {
   const out = {};
   for (const [id, product] of Object.entries(CATALOG)) {
-    out[id] = {
-      house: product.house,
-      name: product.name,
-      badge: product.badge,
-      prices: { ...product.prices }
-    };
+    out[id] = require('../services/shop').enrich(id, product);
   }
   return out;
 }

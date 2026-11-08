@@ -4,11 +4,11 @@ const insertOrderStmt = db.prepare(`
   INSERT INTO orders (
     buy_order, session_id, amount,
     customer_name, customer_email, delivery_address, notes,
-    payment_method, status
+    payment_method, status, shipping_amount, shipping_region
   ) VALUES (
     @buyOrder, @sessionId, @amount,
     @customerName, @customerEmail, @deliveryAddress, @notes,
-    @paymentMethod, @status
+    @paymentMethod, @status, @shippingAmount, @shippingRegion
   )
 `);
 
@@ -43,7 +43,7 @@ const setStatusStmt = db.prepare(`
 
 /** El pedido y todos sus ítems se guardan juntos o no se guarda nada. */
 const createOrderTx = db.transaction((order, items) => {
-  const info = insertOrderStmt.run(order);
+  const info = insertOrderStmt.run({shippingAmount:0, shippingRegion:'', ...order});
   const orderId = Number(info.lastInsertRowid);
   for (const item of items) {
     insertItemStmt.run({ orderId, ...item });
@@ -95,6 +95,9 @@ function toPublicJSON(order) {
   return {
     buyOrder: order.buy_order,
     amount: order.amount,
+    subtotal: order.amount - order.shipping_amount,
+    shippingAmount: order.shipping_amount,
+    shippingRegion: order.shipping_region,
     items: (order.items || []).map((item) => ({
       perfumeId: item.perfume_id,
       house: item.house,

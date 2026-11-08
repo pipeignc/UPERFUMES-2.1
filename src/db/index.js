@@ -82,4 +82,8 @@ function migrateLegacyOrders() {
 
 migrateLegacyOrders();
 
+const orderColumns = db.prepare('PRAGMA table_info(orders)').all().map(c => c.name);
+if (!orderColumns.includes('shipping_amount')) db.exec('ALTER TABLE orders ADD COLUMN shipping_amount INTEGER NOT NULL DEFAULT 0');
+if (!orderColumns.includes('shipping_region')) db.exec("ALTER TABLE orders ADD COLUMN shipping_region TEXT NOT NULL DEFAULT ''");
+
 module.exports = db;

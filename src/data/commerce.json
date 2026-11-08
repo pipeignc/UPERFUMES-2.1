@@ -1,0 +1,23 @@
+{
+  "unavailableFormats": {},
+  "decantImages": {},
+  "packDiscountPercent": 20,
+  "shippingRegions": {
+    "Arica y Parinacota": 15000,
+    "Tarapacá": 15000,
+    "Antofagasta": 15000,
+    "Atacama": 15000,
+    "Coquimbo": 10000,
+    "Valparaíso": 10000,
+    "Metropolitana": 5000,
+    "O’Higgins": 10000,
+    "Maule": 10000,
+    "Ñuble": 10000,
+    "Biobío": 10000,
+    "La Araucanía": 10000,
+    "Los Ríos": 10000,
+    "Los Lagos": 10000,
+    "Aysén": 15000,
+    "Magallanes": 15000
+  }
+}

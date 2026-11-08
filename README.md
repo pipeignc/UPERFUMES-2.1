@@ -254,6 +254,40 @@ original sigue disponible en la portada. Más detalles en
 [FUNCIONALIDADES_PYTHON.md](docs/FUNCIONALIDADES_PYTHON.md).
 
 Validación: `npm test`, `npm run test:python` y `npm run test:python-ui`.
+Las mejoras de compra se validan con `npm run test:commerce`.
 Las pruebas utilizan bases temporales y pagos simulados. Para desarrollo sin
 abrir la base de pedidos incluida, configura `DATABASE_PATH` con una ruta local
 separada, por ejemplo `./data/cloud-dev/uperfumes.sqlite`.
+
+### Precios, packs, stock y despacho
+
+`src/data/commerce.json` define tarifas por región, descuento de los packs,
+formatos agotados y rutas a las fotografías reales de los decants.
+Los packs de tres muestras de 3 ml tienen 20% de descuento: Frescos para diario
+$16.776 y Dulces para la noche $14.376. Todos los formatos están disponibles
+según la última confirmación del negocio. La disponibilidad se mantiene manualmente.
+El checkout exige elegir región y revisar el total; el servidor recalcula productos
+y envío antes de Webpay o transferencia. Tarifas aprobadas: RM $5.000; Coquimbo
+a Los Lagos, salvo RM, $10.000; otras regiones, $15.000.
+
+El chat y el comparador usan los precios y tamaños del catálogo de Express.
+El recomendador mantiene el Random Forest y ofrece alternativas disponibles
+según perfil cuando sus sugerencias no corresponden al catálogo. Sin Python,
+continúa con reglas del catálogo e indica ese modo en los resultados.
+
+En Windows PowerShell, la instalación y el servicio Python se ejecutan así:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m python_service.imperative --csv python_service\data\DATASET_PROTOTIPO.csv
+.\.venv\Scripts\python.exe -m uvicorn python_service.app:app --host 127.0.0.1 --port 8000
+```
+
+En otra terminal, dentro del mismo proyecto:
+
+```powershell
+$env:DATABASE_PATH = './data/cloud-dev/uperfumes.sqlite'
+$env:TRANSBANK_ENVIRONMENT = 'integration'
+npm run dev
+```

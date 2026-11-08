@@ -72,7 +72,11 @@ function isShown(dom, el) {
   }
   return true;
 }
-function fillForm(dom) {
+async function fillForm(dom) {
+  await waitFor(() => $(dom,'#shippingRegion').options.length > 1);
+  $(dom,'#shippingRegion').value = 'Metropolitana';
+  $(dom,'#shippingRegion').dispatchEvent(new dom.window.Event('change',{bubbles:true}));
+  ok(await waitFor(() => !$(dom,'#orderSubmit').disabled), 'total con despacho calculado antes de pagar');
   $(dom, "#fName").value = "Ana Soto"; $(dom, "#fEmail").value = "ana@test.cl"; $(dom, "#fAddress").value = "Av. Siempre Viva 742, Santiago";
 }
 function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("submit", { bubbles: true, cancelable: true })); }
@@ -200,13 +204,13 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   // WEBPAY (simulado): Transbank no es alcanzable desde este sandbox, así que se simula su respuesta
   let createdArgs = null;
   webpay.createTransaction = async (args) => { createdArgs = args; return { token: "TOKEN_TEST_123", url: "https://webpay3gint.transbank.cl/webpayserver/initTransaction" }; };
-  fillForm(dom); submit(dom);
+  await fillForm(dom); submit(dom);
   ok(await waitFor(() => dom.window.__submitted !== null), "Webpay: el navegador redirige a Transbank");
   ok(dom.window.__submitted && dom.window.__submitted.token === "TOKEN_TEST_123" && /transbank/.test(dom.window.__submitted.action), "se envía POST token_ws a la URL de Transbank");
-  ok(createdArgs && createdArgs.amount === 40970, "el servidor creó la transacción por $40.970 (calculado en el servidor)");
+  ok(createdArgs && createdArgs.amount === 45970, "el servidor creó la transacción por $40.970 (calculado en el servidor)");
   ok(dom.window.UPCart.count() === 3, "el carrito se conserva hasta que el pago vuelva aprobado");
   const orderRow = db.prepare("SELECT * FROM orders WHERE webpay_token = 'TOKEN_TEST_123'").get();
-  ok(orderRow && orderRow.status === "pending_webpay" && orderRow.amount === 40970, "pedido guardado como pending_webpay, $40.970");
+  ok(orderRow && orderRow.status === "pending_webpay" && orderRow.amount === 45970, "pedido guardado como pending_webpay, $40.970");
   ok(db.prepare("SELECT COUNT(*) c FROM order_items WHERE order_id = ?").get(orderRow.id).c === 2, "con sus 2 ítems en la base de datos");
   const pending = dom.window.localStorage.getItem("up_cart_pending_v1");
   ok(pending === orderRow.buy_order, "el carrito quedó marcado como 'pago pendiente'");
@@ -216,7 +220,7 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   /* ---------------- 4) vuelta desde Webpay ---------------- */
   console.log("\n[4] vuelta de Webpay -> confirmacion.html");
   webpay.commitTransaction = async () => ({
-    buy_order: orderRow.buy_order, amount: 40970, status: "AUTHORIZED", response_code: 0, authorization_code: "1213",
+    buy_order: orderRow.buy_order, amount: 45970, status: "AUTHORIZED", response_code: 0, authorization_code: "1213",
     card_detail: { card_number: "6623" }, transaction_date: "2026-10-01T12:00:00.000Z"
   });
   let r = await fetch(BASE + "/webpay/retorno?token_ws=TOKEN_TEST_123", { redirect: "manual" });
@@ -230,15 +234,15 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   ok(dom.errors.length === 0, "confirmacion.html sin errores de script" + (dom.errors.length ? " -> " + dom.errors.join(" | ") : ""));
   ok(await waitFor(() => !$(dom, "#confirmApproved").hidden), "se muestra 'Pago aprobado'");
   ok($$(dom, "#apItems li").length === 2 && /Sauvage/.test($(dom, "#apItems").textContent), "lista los 2 productos del pedido");
-  ok($(dom, "#apAmount").textContent === "$40.970" && $(dom, "#apAuthCode").textContent === "1213" && /6623/.test($(dom, "#apCard").textContent), "monto, código de autorización y tarjeta");
+  ok($(dom, "#apAmount").textContent === "$45.970" && $(dom, "#apAuthCode").textContent === "1213" && /6623/.test($(dom, "#apCard").textContent), "monto con despacho, código de autorización y tarjeta");
   ok(await waitFor(() => dom.window.UPCart.count() === 0), "con el pago aprobado, el carrito se vacía");
   ok(dom.window.localStorage.getItem("up_cart_pending_v1") === null, "se limpia la marca de pago pendiente");
   dom.window.close();
 
   // rechazado conserva el carrito
   webpay.createTransaction = async () => ({ token: "TOKEN_RECHAZO", url: "https://x" });
-  let created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay" }) })).json();
-  webpay.commitTransaction = async () => ({ buy_order: created.buyOrder, amount: 7490, status: "FAILED", response_code: -1, card_detail: { card_number: "0568" } });
+  let created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay", region:"Metropolitana", quotedTotal:12490 }) })).json();
+  webpay.commitTransaction = async () => ({ buy_order: created.buyOrder, amount: 12490, status: "FAILED", response_code: -1, card_detail: { card_number: "0568" } });
   await fetch(BASE + "/webpay/retorno?token_ws=TOKEN_RECHAZO", { redirect: "manual" });
   dom = await loadPage("/confirmacion.html?order=" + created.buyOrder, { storage: { up_cart_v1: cart, up_cart_pending_v1: created.buyOrder } });
   ok(await waitFor(() => !$(dom, "#confirmRejected").hidden), "pago rechazado -> 'Pago rechazado'");
@@ -248,13 +252,13 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
 
   // monto distinto
   webpay.createTransaction = async () => ({ token: "TOKEN_MONTO", url: "https://x" });
-  created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay" }) })).json();
+  created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay", region:"Metropolitana", quotedTotal:12490 }) })).json();
   webpay.commitTransaction = async () => ({ buy_order: created.buyOrder, amount: 1, status: "AUTHORIZED", response_code: 0, authorization_code: "9", card_detail: { card_number: "1111" } });
   r = await fetch(BASE + "/webpay/retorno?token_ws=TOKEN_MONTO", { redirect: "manual" });
   ok(r.headers.get("location") === "/confirmacion.html?error=1" && db.prepare("SELECT status FROM orders WHERE buy_order = ?").get(created.buyOrder).status === "amount_mismatch", "monto cobrado distinto al del pedido -> NO se da por aprobado");
 
   // cancelado
-  created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay" }) })).json();
+  created = await (await fetch(BASE + "/api/orders", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: [{ perfumeId: "azzaro-most-wanted-intense", ml: 3, qty: 1 }], customerName: "Luis", customerEmail: "l@l.cl", deliveryAddress: "Calle 12345", paymentMethod: "webpay", region:"Metropolitana", quotedTotal:12490 }) })).json();
   r = await fetch(BASE + "/webpay/retorno", { method: "POST", redirect: "manual", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "TBK_TOKEN=x&TBK_ID_SESION=y&TBK_ORDEN_COMPRA=" + created.buyOrder });
   ok(r.headers.get("location").includes("cancelado=1") && db.prepare("SELECT status FROM orders WHERE buy_order = ?").get(created.buyOrder).status === "cancelled", "pago cancelado -> estado 'cancelled', sin llamar a commit");
 
@@ -266,9 +270,9 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   ok($(dom, "#orderImage").getAttribute("src") === "images/dior-homme-intense.jpg", "foto del perfume seleccionado");
   ok(/10 ml × 2/.test($(dom, "#orderPrice").textContent) && /\$53\.980/.test($(dom, "#orderPrice").textContent), "resumen: 10 ml × 2 — $53.980");
   click(dom, '#orderForm input[value="transferencia"]'); $(dom, '#orderForm input[value="transferencia"]').dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-  fillForm(dom); submit(dom);
+  await fillForm(dom); submit(dom);
   ok(await waitFor(() => !$(dom, "#orderResult").hidden), "transferencia: se muestran los datos bancarios");
-  ok($(dom, "#resultAmount").textContent === "$53.980", "monto a transferir $53.980");
+  ok($(dom, "#resultAmount").textContent === "$58.980", "monto a transferir $53.980");
   ok(dom.window.UPCart.count() === 3, "'Comprar ahora' NO toca el carrito");
   dom.window.close();
 
@@ -281,9 +285,9 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   dom = await loadPage("/carrito.html", { storage: { up_cart_v1: cart } });
   await waitFor(() => $$(dom, "#cartPageList .cart-line").length === 2);
   click(dom, '#orderForm input[value="transferencia"]'); $(dom, '#orderForm input[value="transferencia"]').dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-  fillForm(dom); submit(dom);
+  await fillForm(dom); submit(dom);
   ok(await waitFor(() => !$(dom, "#orderResult").hidden), "transferencia desde el carrito: pedido recibido");
-  ok($(dom, "#resultAmount").textContent === "$40.970", "monto a transferir $40.970");
+  ok($(dom, "#resultAmount").textContent === "$45.970", "monto a transferir $40.970");
   ok(dom.window.UPCart.count() === 0 && $(dom, "#cartPageContent").hidden, "el carrito se vacía y la lista se oculta");
   dom.window.close();
   dom = await loadPage("/carrito.html");
@@ -354,7 +358,7 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   dom = await loadPage("/carrito.html", { storage: { up_cart_v1: seeded } });
   await waitFor(() => $$(dom, "#cartPageList .cart-line").length === 1);
   click(dom, '#orderForm input[value="transferencia"]'); $(dom, '#orderForm input[value="transferencia"]').dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-  fillForm(dom); submit(dom);
+  await fillForm(dom); submit(dom);
   await waitFor(() => !$(dom, "#orderResult").hidden);
   ok(isShown(dom, $(dom, "#orderResult")), "transferencia desde el carrito: se ve el resultado");
   ok(!isShown(dom, $(dom, "#cartPageContent")) && !isShown(dom, $(dom, "#cartPageEmpty")), "y no se ve ni la lista ni el mensaje de carrito vacío");
@@ -365,7 +369,7 @@ function submit(dom) { $(dom, "#orderForm").dispatchEvent(new dom.window.Event("
   ok(isShown(dom, $(dom, "#orderSummary")) && isShown(dom, $(dom, "#orderForm")), "pedido válido: se ven el resumen y el formulario");
   ok(!isShown(dom, $(dom, "#orderEmpty")) && !isShown(dom, $(dom, "#orderResult")), "pedido válido: no se ve ni el aviso de vacío ni el resultado");
   click(dom, '#orderForm input[value="transferencia"]'); $(dom, '#orderForm input[value="transferencia"]').dispatchEvent(new dom.window.Event("change", { bubbles: true }));
-  fillForm(dom); submit(dom);
+  await fillForm(dom); submit(dom);
   await waitFor(() => !$(dom, "#orderResult").hidden);
   ok(isShown(dom, $(dom, "#orderResult")) && !isShown(dom, $(dom, "#orderForm")), "tras transferir: se ve el resultado y el formulario desaparece");
   dom.window.close();

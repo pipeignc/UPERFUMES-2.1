@@ -181,7 +181,7 @@
           return response.json();
         })
         .then(function (data) {
-          return data.products || {};
+          return Object.assign({}, data.products || {}, Object.fromEntries((data.packs || []).map(p => [p.id, p])));
         })
         .catch(function () {
           catalogPromise = null; // permite reintentar más tarde
@@ -261,7 +261,8 @@
   /* HTML de una fila del carrito. Lo usan el panel lateral (variant
      "drawer") y la página del carrito (variant "page"). */
   function rowHTML(line, variant) {
-    var link = "producto.html?id=" + encodeURIComponent(line.id);
+    var isPack = line.id.startsWith('pack-');
+    var link = isPack ? 'index.html#packs' : "producto.html?id=" + encodeURIComponent(line.id);
     var unit = line.unitPrice !== null ? formatCLP(line.unitPrice) : "—";
     var total = line.lineTotal !== null ? formatCLP(line.lineTotal) : "—";
     var attrs = ' data-id="' + esc(line.id) + '" data-ml="' + line.ml + '"';
@@ -269,14 +270,14 @@
     return (
       '<li class="cart-line cart-line--' + variant + '">' +
         '<a class="cart-line__thumb" href="' + link + '" tabindex="-1" aria-hidden="true">' +
-          '<img src="images/' + esc(line.id) + '.jpg" alt="" loading="lazy">' +
+          (isPack ? '<span>3 × 3 ml</span>' : '<img src="images/' + esc(line.id) + '.jpg" alt="" loading="lazy">') +
         "</a>" +
         '<div class="cart-line__info">' +
           '<a class="cart-line__name" href="' + link + '">' +
             esc(line.house) + " " + esc(line.name) +
             (line.badge ? ' <span class="badge">' + esc(line.badge) + "</span>" : "") +
           "</a>" +
-          '<p class="cart-line__meta">' + line.ml + " ml · " + unit + " " + esc(tr("cart.each", "c/u")) + "</p>" +
+          '<p class="cart-line__meta">' + (isPack ? '3 muestras de 3 ml' : line.ml + ' ml') + " · " + unit + " " + esc(tr("cart.each", "c/u")) + "</p>" +
           '<div class="cart-line__controls">' +
             '<div class="qty" role="group" aria-label="' + esc(tr("cart.qty", "Cantidad")) + '">' +
               '<button type="button" data-cart-action="dec"' + attrs +

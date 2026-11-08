@@ -50,6 +50,7 @@ const ordersLimiter = rateLimit({
 app.use("/api/orders", ordersLimiter);
 app.use("/api", ordersRouter);
 app.use("/webpay", webpayRouter);
+app.use('/api/advisor', rateLimit({windowMs:60000, limit:120, standardHeaders:true, legacyHeaders:false}), require('./routes/advisor'));
 
 app.get("/asesor/", (req, res) => res.redirect(308, "/asesor.html"));
 require("../integration/python-features.cjs")(app);

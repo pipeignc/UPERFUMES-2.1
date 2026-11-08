@@ -1,0 +1,433 @@
+{
+  "dior-sauvage-edt": {
+    "occasions": [
+      "diario",
+      "oficina",
+      "cita"
+    ],
+    "climates": [
+      "calido",
+      "templado"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Aromática especiada",
+        "desc": "Fresca y versátil, con bergamota y una base mineral de ambroxán. Funciona casi cualquier día, de la oficina a una cita informal.",
+        "notes": {
+          "top": "bergamota, pimienta",
+          "heart": "pimienta de Sichuan, lavanda, geranio",
+          "base": "ambroxán, cedro, labdanum"
+        }
+      },
+      "en": {
+        "family": "Aromatic spicy",
+        "desc": "Fresh and versatile, with bergamot over a mineral ambroxan base. Works almost any day, from the office to a casual date.",
+        "notes": {
+          "top": "bergamot, pepper",
+          "heart": "Sichuan pepper, lavender, geranium",
+          "base": "ambroxan, cedar, labdanum"
+        }
+      },
+      "pt": {
+        "family": "Aromática especiada",
+        "desc": "Fresca e versátil, com bergamota sobre uma base mineral de ambroxan. Funciona em quase qualquer ocasião, do escritório a um encontro informal.",
+        "notes": {
+          "top": "bergamota, pimenta",
+          "heart": "pimenta-de-sichuan, lavanda, gerânio",
+          "base": "ambroxan, cedro, labdano"
+        }
+      }
+    }
+  },
+  "invictus-victory-elixir": {
+    "occasions": [
+      "noche",
+      "cita",
+      "formal"
+    ],
+    "climates": [
+      "frio",
+      "templado"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Ambarada especiada",
+        "desc": "Un elixir denso de cardamomo, incienso y vainilla. Pensado para noches frías y ocasiones donde quieres notarse.",
+        "notes": {
+          "top": "lavandina, cardamomo verde, pimienta negra",
+          "heart": "incienso, pachulí",
+          "base": "vainilla, haba tonka"
+        }
+      },
+      "en": {
+        "family": "Amber spicy",
+        "desc": "A dense elixir of cardamom, incense and vanilla. Built for cold nights and occasions where you want to be noticed.",
+        "notes": {
+          "top": "lavandin, green cardamom, black pepper",
+          "heart": "incense, patchouli",
+          "base": "vanilla, tonka bean"
+        }
+      },
+      "pt": {
+        "family": "Âmbar especiado",
+        "desc": "Um elixir denso de cardamomo, incenso e baunilha. Pensado para noites frias e ocasiões em que queres notar-te.",
+        "notes": {
+          "top": "lavandim, cardamomo verde, pimenta-preta",
+          "heart": "incenso, pachuli",
+          "base": "baunilha, fava-tonka"
+        }
+      }
+    }
+  },
+  "dior-homme-intense": {
+    "occasions": [
+      "noche",
+      "formal",
+      "cita"
+    ],
+    "climates": [
+      "frio"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Floral amaderada",
+        "desc": "Iris polvoriento y un toque de cacao sobre cedro y vetiver. Elegante y algo golosa, ideal para eventos formales en climas fríos.",
+        "notes": {
+          "top": "lavanda",
+          "heart": "iris, ambrette, pera",
+          "base": "cedro de Virginia, vetiver"
+        }
+      },
+      "en": {
+        "family": "Floral woody",
+        "desc": "An unconventional take on masculinity: powdery iris and a touch of cocoa over cedar and vetiver. Elegant and slightly gourmand, ideal for formal events in cold weather.",
+        "notes": {
+          "top": "lavender",
+          "heart": "iris, ambrette, pear",
+          "base": "Virginia cedar, vetiver"
+        }
+      },
+      "pt": {
+        "family": "Floral amadeirada",
+        "desc": "Uma leitura pouco convencional da masculinidade: íris pulverulenta e um toque de cacau sobre cedro e vetiver. Elegante e ligeiramente gulosa, ideal para eventos formais em climas frios.",
+        "notes": {
+          "top": "lavanda",
+          "heart": "íris, ambrette, pera",
+          "base": "cedro-da-virgínia, vetiver"
+        }
+      }
+    }
+  },
+  "valentino-born-in-roma-extradose": {
+    "occasions": [
+      "noche",
+      "cita",
+      "formal"
+    ],
+    "climates": [
+      "frio"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Fougère amaderada",
+        "desc": "La versión más intensa de Born in Roma: especias envolventes y lavandina sobre un fondo de vetiver y madera de guayaco, pensada para la noche.",
+        "notes": {
+          "top": "mezcla de especias, bergamota",
+          "heart": "lavandina",
+          "base": "vetiver, madera de guayaco"
+        }
+      },
+      "en": {
+        "family": "Woody fougère",
+        "desc": "The most intense version of Born in Roma: enveloping spices and lavandin over a base of vetiver and guaiac wood, built for the night.",
+        "notes": {
+          "top": "spice blend, bergamot",
+          "heart": "lavandin",
+          "base": "vetiver, guaiac wood"
+        }
+      },
+      "pt": {
+        "family": "Fougère amadeirada",
+        "desc": "A versão mais intensa de Born in Roma: especiarias envolventes e lavandim sobre um fundo de vetiver e madeira-de-guaiaco, pensada para a noite.",
+        "notes": {
+          "top": "mistura de especiarias, bergamota",
+          "heart": "lavandim",
+          "base": "vetiver, madeira-de-guaiaco"
+        }
+      }
+    }
+  },
+  "jpg-le-male-elixir": {
+    "occasions": [
+      "noche",
+      "cita"
+    ],
+    "climates": [
+      "frio"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Oriental gourmand",
+        "desc": "Miel, benjuí, vainilla y tabaco. Envolvente y densa, perfecta para el invierno y las citas nocturnas.",
+        "notes": {
+          "top": "lavanda, menta, bergamota",
+          "heart": "benjuí, miel, haba tonka",
+          "base": "vainilla, tabaco, pachulí"
+        }
+      },
+      "en": {
+        "family": "Oriental gourmand",
+        "desc": "The sweetest side of Le Male: lavender and mint on opening, honey and benzoin at the heart, and a base of vanilla, tobacco and patchouli that lingers on skin for hours.",
+        "notes": {
+          "top": "lavender, mint, bergamot",
+          "heart": "benzoin, honey, tonka bean",
+          "base": "vanilla, tobacco, patchouli"
+        }
+      },
+      "pt": {
+        "family": "Oriental gourmand",
+        "desc": "O lado mais guloso de Le Male: lavanda e hortelã na abertura, mel e benjoim no coração, e uma base de baunilha, tabaco e pachuli que fica horas na pele.",
+        "notes": {
+          "top": "lavanda, hortelã, bergamota",
+          "heart": "benjoim, mel, fava-tonka",
+          "base": "baunilha, tabaco, pachuli"
+        }
+      }
+    }
+  },
+  "jpg-le-beau-le-parfum": {
+    "occasions": [
+      "diario",
+      "cita",
+      "noche"
+    ],
+    "climates": [
+      "calido"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Gourmand tropical",
+        "desc": "Piña y jengibre dan paso a un corazón de coco que domina toda la fragancia, apoyado por sándalo, ámbar y haba tonka. Una versión más madura del Le Beau original.",
+        "notes": {
+          "top": "piña, iris, jengibre, ciprés",
+          "heart": "coco, notas amaderadas",
+          "base": "sándalo, haba tonka, ámbar"
+        }
+      },
+      "en": {
+        "family": "Tropical gourmand",
+        "desc": "Pineapple and ginger give way to a coconut heart that dominates the whole fragrance, backed by sandalwood, amber and tonka bean. A more mature take on the original Le Beau.",
+        "notes": {
+          "top": "pineapple, iris, ginger, cypress",
+          "heart": "coconut, woody notes",
+          "base": "sandalwood, tonka bean, amber"
+        }
+      },
+      "pt": {
+        "family": "Gourmand tropical",
+        "desc": "Ananás e gengibre dão lugar a um coração de coco que domina toda a fragrância, apoiado por sândalo, âmbar e fava-tonka. Uma versão mais madura do Le Beau original.",
+        "notes": {
+          "top": "ananás, íris, gengibre, cipreste",
+          "heart": "coco, notas amadeiradas",
+          "base": "sândalo, fava-tonka, âmbar"
+        }
+      }
+    }
+  },
+  "jpg-le-male-le-parfum": {
+    "occasions": [
+      "noche",
+      "cita",
+      "formal"
+    ],
+    "climates": [
+      "frio",
+      "templado"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Oriental especiada",
+        "desc": "Cardamomo especiado, lavanda e iris se funden en una base de vainilla y madera. El equilibrio clásico de la línea Le Male, en una versión más densa.",
+        "notes": {
+          "top": "cardamomo",
+          "heart": "lavanda, iris",
+          "base": "vainilla, notas amaderadas"
+        }
+      },
+      "en": {
+        "family": "Spicy oriental",
+        "desc": "Spiced cardamom, lavender and iris melt into a base of vanilla and wood. The classic balance of the Le Male line, in a denser version.",
+        "notes": {
+          "top": "cardamom",
+          "heart": "lavender, iris",
+          "base": "vanilla, woody notes"
+        }
+      },
+      "pt": {
+        "family": "Oriental especiado",
+        "desc": "Cardamomo especiado, lavanda e íris fundem-se numa base de baunilha e madeira. O equilíbrio clássico da linha Le Male, numa versão mais densa.",
+        "notes": {
+          "top": "cardamomo",
+          "heart": "lavanda, íris",
+          "base": "baunilha, notas amadeiradas"
+        }
+      }
+    }
+  },
+  "mancera-cedrat-boise": {
+    "occasions": [
+      "diario",
+      "oficina",
+      "cita"
+    ],
+    "climates": [
+      "calido",
+      "templado"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Cítrica amaderada",
+        "desc": "Cítricos de Sicilia sobre cedro y cuero. Fresca de día, con carácter suficiente para la oficina o una cita.",
+        "notes": {
+          "top": "limón siciliano, bergamota, grosella negra",
+          "heart": "jazmín, pachulí",
+          "base": "cedro, cuero, sándalo, almizcle blanco"
+        }
+      },
+      "en": {
+        "family": "Citrus woody",
+        "desc": "Sicilian citrus over cedar and leather. Fresh by day, with enough character for the office or a date.",
+        "notes": {
+          "top": "Sicilian lemon, bergamot, blackcurrant",
+          "heart": "jasmine, patchouli",
+          "base": "cedar, leather, sandalwood, white musk"
+        }
+      },
+      "pt": {
+        "family": "Cítrica amadeirada",
+        "desc": "Citrinos da Sicília sobre cedro e couro. Fresca de dia, com carácter suficiente para o escritório ou um encontro.",
+        "notes": {
+          "top": "limão-siciliano, bergamota, groselha-preta",
+          "heart": "jasmim, pachuli",
+          "base": "cedro, couro, sândalo, almíscar-branco"
+        }
+      }
+    }
+  },
+  "mykonos-inception": {
+    "occasions": [
+      "diario",
+      "cita"
+    ],
+    "climates": [
+      "calido"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Floral acuática",
+        "desc": "Naranja, té negro y almizcle. Ligera, luminosa y fácil de llevar en climas cálidos.",
+        "notes": {
+          "top": "naranja, bergamota, jengibre, limón",
+          "heart": "té negro, canela, neroli",
+          "base": "almizcle, cedro, madera de guayaco"
+        }
+      },
+      "en": {
+        "family": "Floral aquatic",
+        "desc": "Orange, ginger and black tea over a base of cedar and musk. A bright, easy-to-wear fragrance, built for warm weather.",
+        "notes": {
+          "top": "orange, bergamot, ginger, lemon",
+          "heart": "black tea, cinnamon, neroli",
+          "base": "musk, cedar, guaiac wood"
+        }
+      },
+      "pt": {
+        "family": "Floral aquática",
+        "desc": "Laranja, gengibre e chá-preto sobre um fundo de cedro e almíscar. Uma fragrância luminosa e fácil de usar, pensada para climas quentes.",
+        "notes": {
+          "top": "laranja, bergamota, gengibre, limão",
+          "heart": "chá-preto, canela, neróli",
+          "base": "almíscar, cedro, madeira-de-guaiaco"
+        }
+      }
+    }
+  },
+  "azzaro-most-wanted-intense": {
+    "occasions": [
+      "diario",
+      "noche",
+      "cita"
+    ],
+    "climates": [
+      "templado",
+      "frio"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Amaderada gourmand",
+        "desc": "Cardamomo especiado que da paso a un corazón de toffee casi comestible, sobre una base de ámbar amaderado. Dulce, pero sin resultar empalagosa.",
+        "notes": {
+          "top": "cardamomo",
+          "heart": "toffee",
+          "base": "ámbar amaderado"
+        }
+      },
+      "en": {
+        "family": "Woody gourmand",
+        "desc": "Spiced cardamom gives way to an almost edible toffee heart, over a base of woody amber. Sweet, without turning cloying.",
+        "notes": {
+          "top": "cardamom",
+          "heart": "toffee",
+          "base": "woody amber"
+        }
+      },
+      "pt": {
+        "family": "Amadeirada gourmand",
+        "desc": "Cardamomo especiado que dá lugar a um coração de caramelo quase comestível, sobre uma base de âmbar amadeirado. Doce, sem se tornar enjoativa.",
+        "notes": {
+          "top": "cardamomo",
+          "heart": "caramelo",
+          "base": "âmbar-amadeirado"
+        }
+      }
+    }
+  },
+  "french-avenue-liquid-brun": {
+    "occasions": [
+      "noche",
+      "cita"
+    ],
+    "climates": [
+      "frio"
+    ],
+    "i18n": {
+      "es": {
+        "family": "Oriental especiada",
+        "desc": "Canela y cardamomo se encuentran con vainilla bourbon y praliné, sobre una base de ámbar y madera de guayaco. Cálida, dulce y de larga duración.",
+        "notes": {
+          "top": "canela, cardamomo, bergamota, azahar",
+          "heart": "vainilla bourbon, elemí",
+          "base": "praliné, almizcle, ambroxán, madera de guayaco"
+        }
+      },
+      "en": {
+        "family": "Spicy oriental",
+        "desc": "Cinnamon and cardamom meet bourbon vanilla and praline, over a base of amber and guaiac wood. Warm, sweet and long-lasting.",
+        "notes": {
+          "top": "cinnamon, cardamom, bergamot, orange blossom",
+          "heart": "bourbon vanilla, elemi",
+          "base": "praline, musk, ambroxan, guaiac wood"
+        }
+      },
+      "pt": {
+        "family": "Oriental especiado",
+        "desc": "Canela e cardamomo encontram-se com baunilha bourbon e praliné, sobre uma base de âmbar e madeira-de-guaiaco. Quente, doce e de longa duração.",
+        "notes": {
+          "top": "canela, cardamomo, bergamota, flor-de-laranjeira",
+          "heart": "baunilha bourbon, elemi",
+          "base": "praliné, almíscar, ambroxan, madeira-de-guaiaco"
+        }
+      }
+    }
+  }
+}

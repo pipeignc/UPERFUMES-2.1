@@ -76,7 +76,7 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     const document = dom.window.document;
     const $ = id => document.getElementById(id);
     const submit = id => $(id).dispatchEvent(new dom.window.Event('submit', { bubbles: true, cancelable: true }));
-    await until(() => $('service-status').textContent.includes('236 perfumes'));
+    await until(() => $('service-status').textContent.includes('Decants del catálogo'));
     assert.equal($('chat').hidden, false);
     assert.equal(document.documentElement.dataset.theme, 'light');
     $('themeToggle').click();
@@ -95,29 +95,29 @@ test('La pantalla ejecuta las tres funcionalidades usando Python real', async ()
     $('recommend-form').elements.budget_clp.value = '142500';
     submit('recommend-form');
     await until(() => document.querySelectorAll('.perfume-card').length === 3);
-    assert.match($('recommend-results').textContent, /Sauvage EDP/);
-    assert.match($('recommend-results').textContent, /99\.750 CLP/);
+    assert.ok($('recommend-results').querySelector('a[href^="/producto.html?id="]'));
+    assert.match($('recommend-results').textContent, /3 ml/);
 
     document.querySelector('[data-panel="compare"]').click();
     await until(() => !$('compare').hidden);
     $('compare-form').elements.query.value = 'sauvage';
     submit('compare-form');
     await until(() => $('compare-results').children.length > 0);
-    assert.match($('compare-results').textContent, /Sauvage EDP/);
+    assert.match($('compare-results').textContent, /Sauvage EDT/);
 
     document.querySelector('[data-panel="chat"]').click();
     await until(() => !$('chat').hidden);
-    $('chat-message').value = '¿Cuánto cuesta Sauvage EDP?';
+    $('chat-message').value = '¿Cuánto cuesta Sauvage?';
     submit('chat-form');
     await until(() => document.querySelectorAll('.bubble.assistant').length === 2);
-    assert.match($('chat-log').textContent, /99\.750 CLP/);
-    assert.match($('chat-log').textContent, /Precio_Real_USD/);
+    assert.match($('chat-log').textContent, /6\.990 CLP/);
+    assert.match($('chat-log').textContent, /Catálogo de UPERFUMES/);
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }
 });
 
 test('No interpreta texto del usuario como HTML', async () => {
-  const response = await fetch(base + '/asesor/api/chat', {
+  const response = await fetch(base + '/api/advisor/chat', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: '<script>alert(1)</script>', rate: '950' }),
   });

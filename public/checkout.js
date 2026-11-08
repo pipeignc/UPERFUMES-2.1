@@ -51,6 +51,36 @@
     var errorCustom = document.getElementById("orderErrorCustom");
     var resultEl = document.getElementById("orderResult");
     var webpayForm = document.getElementById("webpayRedirectForm");
+    var quotation = null;
+    var quoteSequence = 0;
+    var shipping = document.createElement('section');
+    shipping.className = 'shipping-summary';
+    shipping.innerHTML = '<label>Región de despacho<select id="shippingRegion" required><option value="">Selecciona tu región</option></select></label><p id="shippingTotal" role="status">Selecciona tu región para conocer el total con despacho.</p>';
+    submitBtn.before(shipping);
+    var region = shipping.querySelector('select');
+    var totalText = shipping.querySelector('p');
+    submitBtn.disabled = true;
+    async function refreshQuote() {
+      var sequence = ++quoteSequence;
+      quotation = null;
+      submitBtn.disabled = true;
+      if (!region.value || !getItems().length) { totalText.textContent = 'Selecciona tu región para conocer el total con despacho.'; return; }
+      totalText.textContent = 'Calculando total…';
+      try {
+        var response = await fetch('/api/quote', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:getItems(),region:region.value})});
+        var data = await response.json();
+        if (sequence !== quoteSequence) return;
+        if (!response.ok) throw new Error((data.errors || []).join(' '));
+        quotation = { ...data, itemsKey:JSON.stringify(getItems()) };
+        totalText.textContent = 'Productos: '+formatCLP(data.subtotal)+' · Despacho: '+formatCLP(data.shipping)+' · Total a pagar: '+formatCLP(data.total);
+        submitBtn.disabled = false;
+      } catch(error) { if(sequence===quoteSequence) totalText.textContent = error.message || 'No pudimos calcular el despacho. Selecciona tu región nuevamente.'; }
+    }
+    region.addEventListener('change',refreshQuote);
+    if(window.UPCart) window.UPCart.onChange(refreshQuote);
+    fetch('/api/shipping').then(r=>{if(!r.ok)throw Error();return r.json();}).then(data=>{
+      Object.entries(data.regions).forEach(([name,fee])=>{var option=document.createElement('option');option.value=name;option.textContent=name+' · '+formatCLP(fee);region.append(option);});
+    }).catch(()=>{totalText.textContent='No pudimos cargar las tarifas de despacho. Recarga para reintentar.';});
 
     function selectedMethod() {
       var radio = document.querySelector('input[name="pago"]:checked');
@@ -100,7 +130,7 @@
     }
 
     function setBusy(isBusy) {
-      submitBtn.disabled = isBusy;
+      submitBtn.disabled = isBusy || !quotation;
       submitBtn.setAttribute("aria-busy", String(isBusy));
     }
 
@@ -141,11 +171,18 @@
         return;
       }
       if (typeof formEl.reportValidity === "function" && !formEl.reportValidity()) return;
+      if(!quotation || quotation.itemsKey !== JSON.stringify(items)) {
+        showError('custom','Revisa el total actualizado antes de pagar.');
+        refreshQuote();
+        return;
+      }
 
       setBusy(true);
 
       var payload = {
         items: items,
+        region: region.value,
+        quotedTotal: quotation.total,
         customerName: document.getElementById("fName").value.trim(),
         customerEmail: document.getElementById("fEmail").value.trim(),
         deliveryAddress: document.getElementById("fAddress").value.trim(),
@@ -169,6 +206,7 @@
             if (messages.length) showError("custom", messages.join(" "));
             else showError("generic");
             setBusy(false);
+            refreshQuote();
             return;
           }
 

@@ -146,3 +146,28 @@ pagos reales. `npm start` inicia la tienda; `npm run python:dev` inicia el aseso
 `npm test` valida compras con SQLite temporal y Webpay simulado.
 `npm run test:python-ui` valida la página integrada con Express y Python reales,
 incluidos tema, idioma y enlaces directos, usando otra base temporal.
+
+
+## Integración comercial actual
+
+La pantalla de tienda usa `/api/advisor/recommendations`, `compare` y `chat`.
+Express consulta el Random Forest para ordenar sugerencias, cruza coincidencias
+exactas (incluida concentración) y ofrece alternativas del catálogo según ocasión
+y clima. El presupuesto limita los precios de cada decant en CLP. La tasa interna
+950 solo permite consultar el modelo original; no convierte los precios de venta.
+Chat y comparador trabajan directamente con el catálogo; siguen funcionando sin
+Python. El recomendador informa cuando usa solo las reglas del catálogo.
+La API Python original sigue disponible bajo `/asesor/api/` para análisis del dataset.
+
+Configuración comercial: `src/data/commerce.json`. El stock confirmado actualmente
+incluye todos los formatos. Para agotar un formato, añadir por ejemplo
+`"dior-sauvage-edt": [3,5]` a `unavailableFormats`. Esta disponibilidad es manual,
+no un inventario por unidades ni una reserva automática de existencias.
+Los dos packs incluyen tres muestras de 3 ml y descuentan 20%: $16.776 y $14.376.
+El servidor vuelve a calcular precios, disponibilidad y despacho antes de cobrar.
+Los pedidos nuevos requieren `region` y `quotedTotal`, obtenidos de `POST /api/quote`.
+Los pedidos antiguos conservan su monto, con despacho registrado como cero.
+
+Las imágenes actuales son de frascos. Añadir fotos reales de decants a `public/images/`
+y sus rutas públicas a `decantImages` para mostrarlas en las fichas. No se fabrican
+fotografías del producto que se entregará.

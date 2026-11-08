@@ -2,13 +2,13 @@
 'use strict';
 
 // Solo presentación: recomendación, conversación y comparación se resuelven en Python.
-const base = new URL('/asesor/', document.baseURI);
+const base = new URL('/api/advisor/', document.baseURI);
 const $ = id => document.getElementById(id);
 const money = value => new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(value) + ' CLP';
 const history = [];
 
 async function api(path, data) {
-  const response = await fetch(new URL('api/' + path, base), data === undefined ? {} : {
+  const response = await fetch(new URL(path, base), data === undefined ? {} : {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data),
   });
   if (!response.ok) {
@@ -16,13 +16,6 @@ async function api(path, data) {
     throw new Error(typeof error.detail === 'string' ? error.detail : 'Revisa los campos: usa montos positivos y las opciones disponibles.');
   }
   return response.json();
-}
-
-function rate(optional = false) {
-  const input = $('rate');
-  if (optional && !input.value) return null;
-  if (!input.reportValidity()) throw new Error('Ingresa un tipo de cambio válido.');
-  return input.value;
 }
 
 function feedback(id, text, error = false) {
@@ -61,18 +54,11 @@ $('recommend-form').addEventListener('submit', async event => {
     const data = Object.fromEntries(new FormData(event.target));
     data.age = Number(data.age);
     data.budget_clp = Number(data.budget_clp);
-    data.rate = rate();
+
     feedback('recommend-message', 'Buscando afinidades en el modelo…');
     const result = await api('recommendations', data);
-    result.items.forEach((perfume, index) => {
-      const card = element('article', '', 'perfume-card');
-      card.append(element('span', '0' + (index + 1), 'rank'), element('h3', perfume.name),
-        element('p', perfume.price_formatted, 'price'), element('small', 'Precio referencial · stock sin confirmar'),
-        element('p', 'Puntaje del modelo: ' + perfume.score_percent + '%', 'score'),
-        element('span', perfume.within_budget ? 'Dentro de tu presupuesto' : 'Supera tu presupuesto', 'badge' + (perfume.within_budget ? '' : ' over')));
-      $('recommend-results').append(card);
-    });
-    feedback('recommend-message', `Tus sugerencias · Conversión utilizada: ${result.rate} CLP por USD.`);
+    result.items.forEach(perfume => $('recommend-results').append(productCard(perfume)));
+    feedback('recommend-message', result.items.length ? result.notice : 'No hay formatos disponibles con ese presupuesto.');
   } catch (error) { feedback('recommend-message', error.message, true); }
   finally { button.disabled = false; }
 });
@@ -86,16 +72,16 @@ $('compare-form').addEventListener('submit', async event => {
   try {
     const data = Object.fromEntries(new FormData(event.target));
     data.budget_clp = Number(data.budget_clp);
-    data.rate = rate();
+
     feedback('compare-message', 'Comparando precios…');
     const result = await api('compare', data);
     result.items.forEach(perfume => {
       const row = document.createElement('tr');
-      row.append(element('td', perfume.name), element('td', perfume.price_formatted), element('td', money(perfume.remaining_clp)));
+      const cell = element('td', ''); const link = element('a', perfume.name + ' · ' + perfume.ml + ' ml'); link.href = perfume.href; cell.append(link); row.append(cell, element('td', perfume.price_formatted), element('td', money(perfume.remaining_clp)));
       $('compare-results').append(row);
     });
     $('compare-table').hidden = result.items.length === 0;
-    feedback('compare-message', result.items.length ? `Mostrando ${result.items.length} de ${result.total_matches} opciones · ${result.rate} CLP por USD.` : 'No encontramos perfumes con ese nombre y presupuesto. Prueba otro filtro.');
+    feedback('compare-message', result.items.length ? `Mostrando ${result.items.length} opciones del catálogo · despacho no incluido.` : 'No encontramos perfumes con ese nombre y presupuesto. Prueba otro filtro.');
   } catch (error) { feedback('compare-message', error.message, true); }
   finally { button.disabled = false; }
 });
@@ -115,11 +101,12 @@ $('chat-form').addEventListener('submit', async event => {
   const button = event.target.querySelector('button');
   button.disabled = true;
   try {
-    const exchange = rate(true);
+
     bubble('user', message);
     feedback('chat-feedback', 'Consultando la base de conocimiento local…');
-    const result = await api('chat', { message, history: history.slice(-8), rate: exchange });
+    const result = await api('chat', { message, history: history.slice(-8) });
     bubble('assistant', result.answer, result.sources);
+    (result.items || []).forEach(p => $('chat-log').append(productCard(p)));
     history.push({ role: 'user', content: message }, { role: 'assistant', content: result.answer });
     history.splice(0, Math.max(0, history.length - 8));
     $('chat-message').value = '';
@@ -133,15 +120,19 @@ document.querySelectorAll('[data-question]').forEach(button => button.addEventLi
   $('chat-message').focus();
 }));
 
+function productCard(p) {
+  const card = element('article', '', 'perfume-card');
+  card.append(element('h3', p.name), element('p', p.reason), element('small', 'Disponible · despacho calculado al pagar'));
+  p.formats.forEach(f => { const a = element('a', f.ml + ' ml · ' + money(f.price), 'cart-btn cart-btn--ghost'); a.href = f.href; card.append(a); });
+  return card;
+}
 async function initialize() {
   try {
-    const [options, health] = await Promise.all([api('options'), api('health')]);
+    const options = {climates:['Cálido/Tropical','Templado','Frío','Húmedo','Árido/Desértico'],occasions:['Diario/Casual','Oficina/Trabajo','Formal/Noche','Fiesta/Salida nocturna','Deportivo/Ejercicio','Cita romántica','Evento especial/Boda'],genders:['Masculino','Femenino','Unisex']};
     for (const [id, values] of [['climate', options.climates], ['occasion', options.occasions], ['gender', options.genders]]) {
       values.forEach(value => { const option = element('option', value); option.value = value; $(id).append(option); });
     }
-    $('service-status').textContent = health.model_status === 'ready'
-      ? `${health.perfume_count} perfumes para descubrir · Asistente local disponible`
-      : 'El modelo aún no está disponible. Puedes usar el asistente para consultas generales.';
+    $('service-status').textContent = 'Decants del catálogo · Precios en pesos chilenos · Despacho calculado al pagar';
   } catch (error) { $('service-status').textContent = 'No pudimos conectar con el asesor. Revisa que el servicio esté iniciado.'; }
 }
 initialize();

@@ -6,6 +6,8 @@ const webpayService = require("../services/webpay");
 const { generateBuyOrder, generateSessionId } = require("../utils/ids");
 
 const router = express.Router();
+const shop = require('../services/shop');
+const { CATALOG } = require('../data/catalog');
 
 // Datos informativos de la transferencia manual. Son de ejemplo — cámbialos
 // por los reales del negocio antes de usar esto en producción.
@@ -24,13 +26,23 @@ const TRANSFER_DETAILS = {
  * desde el catálogo del servidor.
  */
 router.get("/catalog", (req, res) => {
-  res.set("Cache-Control", "public, max-age=300");
-  res.json({ ok: true, products: listCatalog() });
+  res.set("Cache-Control", "no-store");
+  res.json({ ok: true, products: listCatalog(), packs: shop.packs(CATALOG) });
+});
+
+router.get('/shipping', (req, res) => res.json({ regions: shop.settings().shippingRegions }));
+router.post('/quote', (req, res) => {
+  try { res.json({ok:true, ...shop.quote(req.body.items, req.body.region, getProduct)}); }
+  catch (error) { res.status(400).json({ok:false, errors:[error.message]}); }
 });
 
 router.post("/orders", createOrderRules, handleValidation, async (req, res, next) => {
   try {
     const { items, customerName, customerEmail, deliveryAddress, notes, paymentMethod } = req.body;
+    let quotation;
+    try { quotation = shop.quote(items, req.body.region, getProduct); }
+    catch (error) { return res.status(400).json({ ok:false, errors:[error.message] }); }
+    if (req.body.quotedTotal !== quotation.total) return res.status(409).json({ ok:false, errors:['El total cambió. Revisa el resumen antes de pagar.'] });
 
     // Si llega el mismo perfume+formato en dos líneas, se suman en una sola.
     const merged = new Map();
@@ -58,7 +70,7 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
       orderItems.push({
         perfumeId: item.perfumeId,
         house: product.house,
-        name: product.name,
+        name: product.items ? product.name + ' (' + product.items.map(i => i.name + ' · ' + i.ml + ' ml').join(', ') + ')' : product.name,
         badge: product.badge || "",
         ml: item.ml,
         qty: item.qty,
@@ -67,6 +79,7 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
     }
 
     const buyOrder = generateBuyOrder();
+    amount = quotation.total;
     const sessionId = generateSessionId();
 
     const order = ordersService.createOrder(
@@ -74,6 +87,8 @@ router.post("/orders", createOrderRules, handleValidation, async (req, res, next
         buyOrder,
         sessionId,
         amount,
+        shippingAmount: quotation.shipping,
+        shippingRegion: quotation.region,
         customerName,
         customerEmail,
         deliveryAddress,

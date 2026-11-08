@@ -55,17 +55,20 @@
     var wrap = el("productFormats");
     wrap.innerHTML = VALID_ML.map(function (ml) {
       var checked = ml === selectedMl;
+      var available = product.formats ? product.formats.some(f => f.ml === ml && f.available) : Boolean(product.prices[ml]);
       return (
         '<label class="format-option' + (checked ? " is-checked" : "") + '">' +
-          '<input type="radio" name="ml" value="' + ml + '"' + (checked ? " checked" : "") + ">" +
+          '<input type="radio" name="ml" value="' + ml + '"' + (checked ? " checked" : "") + (available ? "" : " disabled") + ">" +
           '<span class="format-option__ml">' + ml + " ml</span>" +
-          '<span class="format-option__price">' + formatCLP(product.prices[ml]) + "</span>" +
+          '<span class="format-option__price">' + (available ? formatCLP(product.prices[ml]) : "Agotado") + "</span>" +
         "</label>"
       );
     }).join("");
   }
 
   function updateTotals() {
+    el("productAddCart").disabled = !product.available;
+    el("productBuyNow").hidden = !product.available;
     el("productTotal").textContent = formatCLP(product.prices[selectedMl] * qty);
     el("productQtyValue").textContent = String(qty);
     el("productQtyDec").disabled = qty <= 1;
@@ -119,6 +122,7 @@
         return;
       }
 
+      if (product.formats && !product.formats.some(f => f.ml === selectedMl && f.available)) selectedMl = product.formats.find(f => f.available)?.ml || 3;
       renderFormats();
       renderLocalized();
       updateTotals();
@@ -146,7 +150,7 @@
       });
 
       el("productAddCart").addEventListener("click", function () {
-        if (window.UPCart.add(id, selectedMl, qty)) window.UPCart.open();
+        if (product.available && window.UPCart.add(id, selectedMl, qty)) window.UPCart.open();
       });
     });
   }
